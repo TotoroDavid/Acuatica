@@ -1,1 +1,2 @@
-console.log("hello word");
+
+console.log("🌊 Acuatica Main Script Loaded");
