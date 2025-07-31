@@ -90,7 +90,7 @@ function initScrollAnimations() {
         });
     });
 
-    // Animate buttons with magnetic effect
+    // Animate buttons
     gsap.utils.toArray('.button').forEach(button => {
         gsap.from(button, {
             opacity: 0,
@@ -200,6 +200,15 @@ function initNavbarAnimation() {
     });
 }
 
+// ===== LENIS + SCROLLTRIGGER INTEGRATION =====
+lenis.on('scroll', ScrollTrigger.update);
+
+gsap.ticker.add((time) => {
+    lenis.raf(time * 1000);
+});
+
+gsap.ticker.lagSmoothing(0);
+
 // ===== INITIALIZE ALL ANIMATIONS =====
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize all scroll animations
@@ -213,102 +222,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
     console.log("🚀 All Acuatica scroll animations initialized!");
 });
-
-// ===== LENIS + SCROLLTRIGGER INTEGRATION =====
-lenis.on('scroll', ScrollTrigger.update);
-
-gsap.ticker.add((time) => {
-    lenis.raf(time * 1000);
-});
-
-gsap.ticker.lagSmoothing(0);
-
-
-
-// Register GSAP plugins
-gsap.registerPlugin(ScrollTrigger, TextPlugin);
-
-// ===== SCROLL ANIMATIONS =====
-function initScrollAnimations() {
-    // Fade in animation for sections (excluding header to avoid conflicts)
-    gsap.utils.toArray('section:not(.section_header)').forEach(section => {
-        gsap.from(section, {
-            opacity: 0,
-            y: 50,
-            duration: 1,
-            ease: "power2.out",
-            scrollTrigger: {
-                trigger: section,
-                start: "top 80%",
-                end: "bottom 20%",
-                toggleActions: "play none none reverse"
-            }
-        });
-    });
-}
-
-// ===== INITIALIZE EVERYTHING =====
-document.addEventListener('DOMContentLoaded', () => {
-    // Initialize scroll animations
-    initScrollAnimations();
-
-    // Add some extra polish to navbar
-    gsap.from('.navbar5_component', {
-        y: -100,
-        opacity: 0,
-        duration: 1,
-        ease: "power3.out",
-        delay: 0.5
-    });
-
-    console.log("🚀 Acuatica animations initialized!");
-});
-
-// ===== UTILITY FUNCTIONS =====
-// Function to add magnetic effect to buttons
-function addMagneticEffect() {
-    const buttons = document.querySelectorAll('.button');
-
-    buttons.forEach(button => {
-        button.addEventListener('mouseenter', () => {
-            gsap.to(button, {
-                scale: 1.05,
-                duration: 0.3,
-                ease: "power2.out"
-            });
-        });
-
-        button.addEventListener('mouseleave', () => {
-            gsap.to(button, {
-                scale: 1,
-                duration: 0.3,
-                ease: "power2.out"
-            });
-        });
-
-        button.addEventListener('mousemove', (e) => {
-            const rect = button.getBoundingClientRect();
-            const x = e.clientX - rect.left - rect.width / 2;
-            const y = e.clientY - rect.top - rect.height / 2;
-
-            gsap.to(button, {
-                x: x * 0.1,
-                y: y * 0.1,
-                duration: 0.3,
-                ease: "power2.out"
-            });
-        });
-
-        button.addEventListener('mouseleave', () => {
-            gsap.to(button, {
-                x: 0,
-                y: 0,
-                duration: 0.5,
-                ease: "elastic.out(1, 0.3)"
-            });
-        });
-    });
-}
-
-// Initialize magnetic effect when DOM is ready
-document.addEventListener('DOMContentLoaded', addMagneticEffect);
