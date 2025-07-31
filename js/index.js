@@ -1,24 +1,26 @@
-// Acuatica website custom JavaScript
-console.log("Acuatica website loaded successfully");
-
-// Wait for DOM to be ready
-document.addEventListener('DOMContentLoaded', function () {
-    console.log("DOM is ready");
-
-    // Add any custom functionality here
-    // For example, smooth scrolling, form handling, etc.
-
-    // Example: Smooth scrolling for anchor links
-    const links = document.querySelectorAll('a[href^="#"]');
-    links.forEach(link => {
-        link.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth'
-                });
-            }
-        });
-    });
+let lenis = new Lenis({
+    lerp: 0.1,
+    wheelMultiplier: 0.7,
+    gestureOrientation: "vertical",
+    normalizeWheel: false,
+    smoothTouch: false,
+});
+function raf(time) {
+    lenis.raf(time);
+    requestAnimationFrame(raf);
+}
+requestAnimationFrame(raf);
+$("[data-lenis-start]").on("click", function () {
+    lenis.start();
+});
+$("[data-lenis-stop]").on("click", function () {
+    lenis.stop();
+});
+$("[data-lenis-toggle]").on("click", function () {
+    $(this).toggleClass("stop-scroll");
+    if ($(this).hasClass("stop-scroll")) {
+        lenis.stop();
+    } else {
+        lenis.start();
+    }
 });
