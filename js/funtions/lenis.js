@@ -1,3 +1,6 @@
+console.log("lenis.js");
+
+
 let lenis = new Lenis({
     lerp: 0.1,
     wheelMultiplier: 0.7,
