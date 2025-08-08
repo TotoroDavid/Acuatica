@@ -1,2 +1,2 @@
 
-console.log("🌊 Acuatica Main Script Loaded");
+console.log("este es un nuevo console log");
