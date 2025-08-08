@@ -1,11 +1,11 @@
-// ===== ACUATICA SMOOTH SCROLL & ANIMATIONS =====
-console.log("🌊 Lenis Smooth Scroll & GSAP Animations Loaded");
+// ===== ACUATICA SMOOTH SCROLL & ANIMATIONS v2.0 =====
+console.log("🌊 Lenis Smooth Scroll & GSAP Animations Loaded [v2.0]");
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger, TextPlugin);
 
 // ===== LENIS SMOOTH SCROLL SETUP =====
-let lenis = new Lenis({
+const lenis = new Lenis({
     lerp: 0.1,
     wheelMultiplier: 0.7,
     gestureOrientation: "vertical",
@@ -19,178 +19,17 @@ function raf(time) {
 }
 requestAnimationFrame(raf);
 
-// Lenis control buttons
-$("[data-lenis-start]").on("click", function () {
-    lenis.start();
+// ===== GSAP + LENIS INTEGRATION =====
+lenis.on('scroll', ScrollTrigger.update);
+gsap.ticker.add((time) => {
+    lenis.raf(time * 1000);
 });
-$("[data-lenis-stop]").on("click", function () {
-    lenis.stop();
-});
-$("[data-lenis-toggle]").on("click", function () {
-    $(this).toggleClass("stop-scroll");
-    if ($(this).hasClass("stop-scroll")) {
-        lenis.stop();
-    } else {
-        lenis.start();
-    }
-});
+gsap.ticker.lagSmoothing(0);
 
-// ===== GSAP SCROLL ANIMATIONS =====
-function initScrollAnimations() {
-    // Fade in animation for sections (excluding header to avoid conflicts)
-    gsap.utils.toArray('section:not(.section_header)').forEach(section => {
-        gsap.from(section, {
-            opacity: 0,
-            y: 50,
-            duration: 1,
-            ease: "power2.out",
-            scrollTrigger: {
-                trigger: section,
-                start: "top 80%",
-                end: "bottom 20%",
-                toggleActions: "play none none reverse"
-            }
-        });
-    });
+// ===== MAIN ANIMATION INITIALIZATION =====
+function initAnimations() {
 
-    // Animate service cards
-    gsap.utils.toArray('.servicios_soluciones_item').forEach((card, index) => {
-        gsap.from(card, {
-            opacity: 0,
-            y: 60,
-            scale: 0.9,
-            duration: 0.8,
-            ease: "back.out(1.7)",
-            delay: index * 0.1,
-            scrollTrigger: {
-                trigger: card,
-                start: "top 85%",
-                toggleActions: "play none none reverse"
-            }
-        });
-    });
-
-    // Animate headings with word-by-word effect
-    gsap.utils.toArray('h2, h3').forEach(heading => {
-        const text = heading.textContent;
-        const words = text.split(' ');
-        heading.innerHTML = words.map(word => `<span class="word-animate">${word}</span>`).join(' ');
-
-        gsap.from(heading.querySelectorAll('.word-animate'), {
-            opacity: 0,
-            y: 20,
-            duration: 0.6,
-            stagger: 0.1,
-            ease: "power2.out",
-            scrollTrigger: {
-                trigger: heading,
-                start: "top 90%",
-                toggleActions: "play none none reverse"
-            }
-        });
-    });
-
-    // Animate buttons
-    gsap.utils.toArray('.button').forEach(button => {
-        gsap.from(button, {
-            opacity: 0,
-            scale: 0.8,
-            duration: 0.6,
-            ease: "back.out(1.7)",
-            scrollTrigger: {
-                trigger: button,
-                start: "top 90%",
-                toggleActions: "play none none reverse"
-            }
-        });
-    });
-
-    // Parallax effect for images (excluding header images)
-    gsap.utils.toArray('img:not(.tab-image)').forEach(image => {
-        gsap.to(image, {
-            yPercent: -15,
-            ease: "none",
-            scrollTrigger: {
-                trigger: image,
-                start: "top bottom",
-                end: "bottom top",
-                scrub: 1
-            }
-        });
-    });
-
-    // Animate testimonial cards
-    gsap.utils.toArray('.testimonios_item').forEach((testimonial, index) => {
-        gsap.from(testimonial, {
-            opacity: 0,
-            x: index % 2 === 0 ? -50 : 50,
-            duration: 0.8,
-            ease: "power2.out",
-            scrollTrigger: {
-                trigger: testimonial,
-                start: "top 85%",
-                toggleActions: "play none none reverse"
-            }
-        });
-    });
-
-    // Animate FAQ items
-    gsap.utils.toArray('.faq_item').forEach((faq, index) => {
-        gsap.from(faq, {
-            opacity: 0,
-            y: 30,
-            duration: 0.6,
-            delay: index * 0.1,
-            ease: "power2.out",
-            scrollTrigger: {
-                trigger: faq,
-                start: "top 90%",
-                toggleActions: "play none none reverse"
-            }
-        });
-    });
-}
-
-// ===== MAGNETIC BUTTON EFFECTS =====
-function addMagneticEffect() {
-    const buttons = document.querySelectorAll('.button');
-
-    buttons.forEach(button => {
-        button.addEventListener('mouseenter', () => {
-            gsap.to(button, {
-                scale: 1.05,
-                duration: 0.3,
-                ease: "power2.out"
-            });
-        });
-
-        button.addEventListener('mouseleave', () => {
-            gsap.to(button, {
-                scale: 1,
-                x: 0,
-                y: 0,
-                duration: 0.5,
-                ease: "elastic.out(1, 0.3)"
-            });
-        });
-
-        button.addEventListener('mousemove', (e) => {
-            const rect = button.getBoundingClientRect();
-            const x = e.clientX - rect.left - rect.width / 2;
-            const y = e.clientY - rect.top - rect.height / 2;
-
-            gsap.to(button, {
-                x: x * 0.1,
-                y: y * 0.1,
-                duration: 0.3,
-                ease: "power2.out"
-            });
-        });
-    });
-}
-
-// ===== NAVBAR ANIMATION =====
-function initNavbarAnimation() {
+    // --- Navbar ---
     gsap.from('.navbar5_component', {
         y: -100,
         opacity: 0,
@@ -198,27 +37,99 @@ function initNavbarAnimation() {
         ease: "power3.out",
         delay: 0.5
     });
+
+    // --- Magnetic Buttons ---
+    // Esta animación es sutil y de bajo costo, puede quedar fuera de matchMedia si se desea
+    document.querySelectorAll('.button').forEach(button => {
+        const strength = 20; // Controla la fuerza del efecto magnético
+        let magneto = gsap.quickTo(button, "x", { duration: 0.5, ease: "elastic.out(1, 0.3)" });
+        let magnetoY = gsap.quickTo(button, "y", { duration: 0.5, ease: "elastic.out(1, 0.3)" });
+
+        button.addEventListener('mousemove', e => {
+            const { clientX, clientY } = e;
+            const { height, width, left, top } = button.getBoundingClientRect();
+            const x = clientX - left - width / 2;
+            const y = clientY - top - height / 2;
+            magneto(x * 0.15);
+            magnetoY(y * 0.15);
+        });
+
+        button.addEventListener('mouseleave', () => {
+            magneto(0);
+            magnetoY(0);
+        });
+    });
+
+    // --- SCROLL-BASED ANIMATIONS ---
+    // MEJORA: Usamos matchMedia para accesibilidad y rendimiento
+    ScrollTrigger.matchMedia({
+        "(min-width: 768px) and (prefers-reduced-motion: no-preference)": function () {
+
+            // MEJORA: Animamos en lotes para un rendimiento óptimo
+            // Asegúrate de poner opacity: 0 en Webflow a estos elementos
+            ScrollTrigger.batch(".servicios_soluciones_item, .faq_item, .button:not(.is-nav)", {
+                interval: 0.1,
+                batchMax: 5,
+                onEnter: batch => gsap.from(batch, {
+                    opacity: 0,
+                    y: 40,
+                    stagger: 0.15,
+                    ease: "power2.out",
+                    duration: 0.8
+                }),
+                once: true
+            });
+
+            ScrollTrigger.batch(".testimonios_item", {
+                onEnter: batch => gsap.from(batch, {
+                    opacity: 0,
+                    x: (i) => i % 2 === 0 ? -50 : 50, // Acceder al índice dentro de la función
+                    stagger: 0.2,
+                    ease: "power2.out",
+                    duration: 1
+                }),
+                once: true
+            });
+
+            // Parallax para imágenes
+            gsap.utils.toArray('img:not(.tab-image)').forEach(image => {
+                gsap.to(image, {
+                    yPercent: -15,
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: image,
+                        start: "top bottom",
+                        end: "bottom top",
+                        scrub: true // Usar 'true' es a menudo más suave que un número
+                    }
+                });
+            });
+
+            // Animaciones de texto más complejas
+            gsap.utils.toArray('h2, h3').forEach(heading => {
+                gsap.from(heading, {
+                    opacity: 0,
+                    y: 30,
+                    ease: "power2.out",
+                    duration: 1,
+                    scrollTrigger: {
+                        trigger: heading,
+                        start: "top 90%",
+                        toggleActions: "play none none reverse",
+                    }
+                });
+            });
+
+        }
+    });
 }
 
-// ===== LENIS + SCROLLTRIGGER INTEGRATION =====
-lenis.on('scroll', ScrollTrigger.update);
 
-gsap.ticker.add((time) => {
-    lenis.raf(time * 1000);
-});
-
-gsap.ticker.lagSmoothing(0);
-
-// ===== INITIALIZE ALL ANIMATIONS =====
+// ===== DOMContentLoaded -> INITIALIZE =====
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize all scroll animations
-    initScrollAnimations();
-
-    // Initialize magnetic button effects
-    addMagneticEffect();
-
-    // Initialize navbar animation
-    initNavbarAnimation();
-
-    console.log("🚀 All Acuatica scroll animations initialized!");
+    // MEJORA: Usamos gsap.context para una mejor gestión y limpieza
+    let ctx = gsap.context(() => {
+        initAnimations();
+        console.log("🚀 All Acuatica scroll animations initialized!");
+    });
 });
