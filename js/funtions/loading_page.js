@@ -14,8 +14,8 @@ const animationConfig = {
         }
     },
     reveal: {
-        images: { stagger: 0.3, duration: 1.5 },
-        zoom: { scale: 1.2, duration: 4 },
+        images: { stagger: 0.8, duration: 2.0 },
+        zoom: { scale: 1.5, duration: 3 },
         navigation: { y: 0, duration: 1.2 },
         title: { stagger: 0.1, duration: 0.8 },
         heroExit: { duration: 1.5, delay: 2 } // Configuración para salida de hero
