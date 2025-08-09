@@ -1,104 +1,8 @@
 /**
  * Acuatica Landing Page Reveal Animation con GSAP
- * Animación de preloader con contador y revelado de contenido hero
+ * Animación de preloader con contador y revelado secuencial de 7 imágenes hero
  * Basado en arquitectura de capas superpuestas con clip-path
- * Version 2.0 - Limpia y sin conflictos
  */
-
-// ===== LIMPIEZA DE CÓDIGO ANTERIOR =====
-(function () {
-    'use strict';
-
-    // Limpiar cualquier loader o timeline anterior
-    if (window.loaderInitialized) {
-        console.log('🧹 Cleaning previous loader instance...');
-
-        // Detener cualquier timeline anterior
-        if (window.masterTimeline) {
-            window.masterTimeline.kill();
-            window.masterTimeline = null;
-        }
-
-        // Limpiar timeouts anteriores
-        if (window.loaderTimeouts) {
-            window.loaderTimeouts.forEach(timeout => clearTimeout(timeout));
-            window.loaderTimeouts = [];
-        }
-
-        // Reset flags
-        window.loaderInitialized = false;
-        window.loaderCompleted = false;
-        window.loaderStarted = false;
-    }
-
-    // Función global de limpieza de emergencia
-    window.forceCleanLoader = function () {
-        const wrapper = document.querySelector('.loader-wrapper');
-        const heroImages = document.querySelectorAll('.hero-img');
-        const navbar = document.querySelector('.navbar5_component');
-
-        if (wrapper) {
-            heroImages.forEach(img => {
-                img.style.clipPath = 'polygon(0 0%, 100% 0%, 100% 100%, 0 100%)';
-                img.style.opacity = '1';
-                img.style.transform = 'scale(1)';
-            });
-
-            if (navbar) {
-                navbar.style.opacity = '1';
-                navbar.style.transform = 'translateY(0)';
-            }
-
-            wrapper.style.display = 'none';
-            setTimeout(() => {
-                if (wrapper.parentNode) {
-                    wrapper.parentNode.removeChild(wrapper);
-                }
-            }, 100);
-        }
-
-        console.log('🚨 Emergency loader cleanup completed');
-    };
-
-    // Ejecutar limpieza inmediata si hay problemas
-    setTimeout(() => {
-        if (document.querySelector('.loader-wrapper')) {
-            const hasErrors = document.querySelectorAll('[data-w-id="c681c04e-9cd1-65a3-4b77-29e07c8cf36a"]').length > 0;
-            if (hasErrors) {
-                console.log('🔧 Detected potential conflicts, running immediate cleanup...');
-                window.forceCleanLoader();
-            }
-        }
-    }, 3000); // Ejecutar después de 3 segundos si hay problemas
-})();
-
-/**
- * Limpiar código residual que pueda estar causando conflictos
- */
-function cleanResidualCode() {
-    try {
-        // Limpiar elementos problemáticos de Webflow
-        const problematicElements = document.querySelectorAll('[data-w-id="c681c04e-9cd1-65a3-4b77-29e07c8cf36a"]');
-        problematicElements.forEach(el => {
-            // Remover event listeners problemáticos
-            el.onclick = null;
-            el.style.pointerEvents = 'none';
-        });
-
-        // Limpiar cualquier timeline global anterior
-        if (window.gsap && window.gsap.globalTimeline) {
-            window.gsap.globalTimeline.getChildren().forEach(tl => {
-                if (tl.vars && tl.vars.id === 'acuatica-loader') {
-                    tl.kill();
-                }
-            });
-        }
-
-        console.log(`🧹 Cleaned ${problematicElements.length} residual elements`);
-    } catch (e) {
-        console.warn('Could not clean residual code:', e);
-    }
-}
 
 // ===== CONFIGURACIÓN DE ANIMACIÓN =====
 const animationConfig = {
@@ -117,18 +21,18 @@ const animationConfig = {
     },
     reveal: {
         images: {
-            displayTime: 0.8, // Tiempo que cada imagen permanece visible
-            transitionTime: 0.4, // Tiempo de transición entre imágenes
+            displayTime: 1.0, // Tiempo que cada imagen permanece visible
+            transitionTime: 0.5, // Tiempo de transición entre imágenes
             start: 9,
             effects: {
-                zoomIn: 1.1, // Zoom de entrada
-                zoomHover: 1.05, // Zoom durante display
-                zoomOut: 1.15 // Zoom de salida
+                zoomIn: 1.08, // Zoom de entrada
+                zoomHover: 1.03, // Zoom durante display
+                zoomOut: 1.12 // Zoom de salida
             }
         },
         navigation: {
             duration: 0.8,
-            start: 14, // Después de que terminen todas las imágenes
+            start: 16, // Después de que terminen todas las imágenes
             ease: "power2.out"
         }
     }
@@ -144,19 +48,18 @@ let loaderDuration = 8;
 (function () {
     'use strict';
 
-    // Control de ejecución única con limpieza
-    if (window.loaderInitialized) {
-        console.log('⚠️ Loader already initialized, skipping...');
+    // Control de ejecución única
+    if (window.acuaticaLoaderInitialized) {
+        console.log('⚠️ Acuatica loader already initialized, skipping...');
         return;
     }
 
-    // Marcar como inicializado inmediatamente
-    window.loaderInitialized = true;
-    window.loaderTimeouts = [];
+    window.acuaticaLoaderInitialized = true;
+    console.log('🚀 Initializing Acuatica loader...');
 
     // Verificar si es primera visita
     try {
-        if (sessionStorage.getItem("visited") !== null) {
+        if (sessionStorage.getItem("acuatica_visited") !== null) {
             isFirstVisit = false;
             loaderDuration = 2;
             // Ajustar configuración para visitantes recurrentes
@@ -166,15 +69,12 @@ let loaderDuration = 8;
             animationConfig.preloader.progressBar.phase2.duration = 0.8;
             animationConfig.preloader.exit.start = 2;
             animationConfig.reveal.start = 3;
-            animationConfig.reveal.navigation.start = 6;
+            animationConfig.reveal.navigation.start = 8;
         }
-        sessionStorage.setItem("visited", "true");
+        sessionStorage.setItem("acuatica_visited", "true");
     } catch (e) {
         console.warn('SessionStorage not available:', e);
     }
-
-    // Limpiar cualquier código residual antes de inicializar
-    cleanResidualCode();
 
     // Inicializar cuando el DOM esté listo
     if (document.readyState === 'loading') {
@@ -208,7 +108,8 @@ function initializeAnimation() {
         // Crear y ejecutar timeline principal
         createMasterTimeline();
 
-        console.log(`🎬 Animation initialized (${isFirstVisit ? 'first visit' : 'returning visitor'})`);
+        console.log(`🎬 Acuatica animation initialized (${isFirstVisit ? 'first visit' : 'returning visitor'})`);
+        console.log(`📸 Found ${heroImages.length} hero images for reveal sequence`);
 
     } catch (error) {
         console.error('Animation initialization error:', error);
@@ -231,7 +132,23 @@ function initializeElements() {
         throw new Error('Loader wrapper not found');
     }
 
-    console.log(`🎨 Found ${heroImages.length} hero images`);
+    if (heroImages.length === 0) {
+        console.warn('⚠️ No hero images found! Expected 7 images with classes .hero-img.z-index-1 through .hero-img.z-index-7');
+    }
+
+    // Log de elementos encontrados para debugging
+    console.log('🔍 DOM Elements found:');
+    console.log('- Preloader:', !!preloader);
+    console.log('- Progress bar:', !!progressBar);
+    console.log('- Hero images:', heroImages.length);
+    console.log('- Navbar:', !!navbar);
+    console.log('- Loader number:', !!loaderNumber);
+
+    // Log específico de imágenes hero
+    heroImages.forEach((img, index) => {
+        const zIndexClass = Array.from(img.classList).find(cls => cls.startsWith('z-index-'));
+        console.log(`  Hero image ${index + 1}: ${zIndexClass || 'no z-index class'}`);
+    });
 }
 
 /**
@@ -282,7 +199,7 @@ function injectCriticalStyles() {
                 will-change: transform, opacity;
             }
             
-            /* Z-index específicos para capas */
+            /* Z-index específicos para capas - CRÍTICO para la secuencia */
             .hero-img.z-index-1 { z-index: 1; }
             .hero-img.z-index-2 { z-index: 2; }
             .hero-img.z-index-3 { z-index: 3; }
@@ -308,38 +225,43 @@ function prepareElements() {
         opacity: 1
     });
 
-    // Preparar imágenes hero - inicialmente ocultas
-    gsap.set(heroImages, {
-        clipPath: 'polygon(0 100%, 100% 100%, 100% 100%, 0 100%)',
-        scale: animationConfig.reveal.images.effects.zoomIn,
-        opacity: 1,
-        transformOrigin: 'center center'
-    });
+    // Preparar imágenes hero - TODAS inicialmente ocultas con clip-path
+    if (heroImages.length > 0) {
+        gsap.set(heroImages, {
+            clipPath: 'polygon(0 100%, 100% 100%, 100% 100%, 0 100%)',
+            scale: animationConfig.reveal.images.effects.zoomIn,
+            opacity: 1,
+            transformOrigin: 'center center'
+        });
+
+        console.log(`🎯 Prepared ${heroImages.length} hero images with initial clip-path (hidden)`);
+    }
 
     // Preparar navbar - inicialmente oculta
-    gsap.set(navbar, {
-        y: -100,
-        opacity: 0
-    });
+    if (navbar) {
+        gsap.set(navbar, {
+            y: -100,
+            opacity: 0
+        });
+    }
 
-    console.log('🎯 Elements prepared for animation');
+    console.log('✅ All elements prepared for animation');
 }
 
 /**
  * Crear timeline principal con todas las animaciones
  */
 function createMasterTimeline() {
-    // Crear timeline principal con ID único
+    // Crear timeline principal
     masterTimeline = gsap.timeline({
-        id: 'acuatica-loader',
         onComplete: () => {
             console.log('✨ Master animation sequence completed');
             cleanupAnimation();
         }
     });
 
-    // Guardar referencia global
-    window.masterTimeline = masterTimeline;
+    // Guardar referencia global para debugging
+    window.acuaticaMasterTimeline = masterTimeline;
 
     // Fase 1: Animaciones del preloader
     animatePreloader();
@@ -347,11 +269,13 @@ function createMasterTimeline() {
     // Fase 2: Ocultar preloader
     hidePreloader();
 
-    // Fase 3: Revelar contenido hero
+    // Fase 3: Revelar contenido hero (LO MÁS IMPORTANTE)
     revealHeroContent();
 
     // Fase 4: Animar navegación
     animateNavigation();
+
+    console.log(`⏱️ Total timeline duration: ${masterTimeline.duration().toFixed(2)}s`);
 }
 
 /**
@@ -423,28 +347,46 @@ function hidePreloader() {
 }
 
 /**
- * Revelar contenido hero con animación de imágenes secuencial
+ * FUNCIÓN CLAVE: Revelar contenido hero con animación de imágenes secuencial
  */
 function revealHeroContent() {
     const config = animationConfig.reveal;
 
     if (heroImages.length === 0) {
-        console.warn('No hero images found for reveal animation');
+        console.error('❌ No hero images found for reveal animation!');
         return;
     }
+
+    console.log(`🎬 Starting hero reveal sequence with ${heroImages.length} images at ${config.images.start}s`);
 
     // Configurar timing para secuencia de imágenes
     const imageDisplayTime = config.images.displayTime;
     const transitionTime = config.images.transitionTime;
     let currentTime = config.images.start;
 
+    // Ordenar imágenes por z-index para secuencia correcta
+    const sortedImages = Array.from(heroImages).sort((a, b) => {
+        const aIndex = parseInt(a.className.match(/z-index-(\d+)/)?.[1] || '0');
+        const bIndex = parseInt(b.className.match(/z-index-(\d+)/)?.[1] || '0');
+        return aIndex - bIndex;
+    });
+
+    console.log('📋 Image sequence order:');
+    sortedImages.forEach((img, index) => {
+        const zIndexClass = img.className.match(/z-index-(\d+)/)?.[1] || 'unknown';
+        console.log(`  ${index + 1}. z-index-${zIndexClass}`);
+    });
+
     // Animar cada imagen secuencialmente
-    heroImages.forEach((img, index) => {
-        const isLastImage = index === heroImages.length - 1;
+    sortedImages.forEach((img, index) => {
+        const isLastImage = index === sortedImages.length - 1;
+        const zIndexClass = img.className.match(/z-index-(\d+)/)?.[1] || index + 1;
+
+        console.log(`🎭 Animating image ${index + 1} (z-index-${zIndexClass}) at ${currentTime}s`);
 
         // === ENTRADA DE LA IMAGEN ===
 
-        // 1. Revelar con clip-path
+        // 1. Revelar con clip-path desde abajo
         masterTimeline.to(img, {
             clipPath: 'polygon(0 0%, 100% 0%, 100% 100%, 0 100%)',
             duration: transitionTime,
@@ -467,17 +409,26 @@ function revealHeroContent() {
             ease: 'power2.out'
         }, currentTime + transitionTime);
 
+        // 4. Efecto de "respiración" sutil
+        masterTimeline.to(img, {
+            scale: config.images.effects.zoomHover,
+            duration: 0.2,
+            ease: 'sine.inOut',
+            yoyo: true,
+            repeat: 1
+        }, currentTime + transitionTime + 0.2);
+
         // === SALIDA DE LA IMAGEN (excepto la última) ===
 
         if (!isLastImage) {
-            // 4. Zoom out antes de ocultar
+            // 5. Zoom out antes de ocultar
             masterTimeline.to(img, {
                 scale: config.images.effects.zoomOut,
                 duration: 0.2,
                 ease: 'power2.in'
             }, currentTime + imageDisplayTime - 0.2);
 
-            // 5. Ocultar con clip-path
+            // 6. Ocultar con clip-path hacia arriba
             masterTimeline.to(img, {
                 clipPath: 'polygon(0 0%, 100% 0%, 100% 0%, 0 0%)',
                 duration: transitionTime * 0.8,
@@ -485,6 +436,8 @@ function revealHeroContent() {
             }, currentTime + imageDisplayTime - 0.1);
         } else {
             // === IMAGEN FINAL (permanece visible) ===
+
+            console.log(`🏆 Final image (z-index-${zIndexClass}) will remain visible`);
 
             // Transición final suave a escala normal
             masterTimeline.to(img, {
@@ -499,9 +452,11 @@ function revealHeroContent() {
             }, currentTime + imageDisplayTime);
         }
 
-        // Incrementar tiempo para la siguiente imagen
+        // Incrementar tiempo para la siguiente imagen con overlap suave
         currentTime += imageDisplayTime - (transitionTime * 0.2);
     });
+
+    console.log(`✅ Hero reveal sequence configured, ending at ${currentTime.toFixed(2)}s`);
 }
 
 /**
@@ -517,6 +472,8 @@ function animateNavigation() {
             duration: config.duration,
             ease: config.ease
         }, config.start);
+
+        console.log(`🧭 Navigation animation scheduled at ${config.start}s`);
     }
 }
 
@@ -557,29 +514,35 @@ function fallbackAnimation() {
 
             // Ocultar loader después de completar
             setTimeout(() => {
-                // Revelar imágenes hero
-                heroImages.forEach(img => {
-                    img.style.clipPath = 'polygon(0 0%, 100% 0%, 100% 100%, 0 100%)';
-                    img.style.opacity = '1';
+                // Revelar TODAS las imágenes hero
+                heroImages.forEach((img, index) => {
+                    setTimeout(() => {
+                        img.style.clipPath = 'polygon(0 0%, 100% 0%, 100% 100%, 0 100%)';
+                        img.style.opacity = '1';
+                        img.style.transform = 'scale(1)';
+                        console.log(`📸 Fallback: Revealed hero image ${index + 1}`);
+                    }, index * 200); // 200ms entre cada imagen
                 });
 
                 // Ocultar wrapper
-                wrapper.style.transition = 'opacity 0.8s ease';
-                wrapper.style.opacity = '0';
-
-                // Mostrar navbar
-                if (navbar) {
-                    navbar.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-                    navbar.style.opacity = '1';
-                    navbar.style.transform = 'translateY(0)';
-                }
-
-                // Remover wrapper
                 setTimeout(() => {
-                    if (wrapper.parentNode) {
-                        wrapper.parentNode.removeChild(wrapper);
+                    wrapper.style.transition = 'opacity 0.8s ease';
+                    wrapper.style.opacity = '0';
+
+                    // Mostrar navbar
+                    if (navbar) {
+                        navbar.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                        navbar.style.opacity = '1';
+                        navbar.style.transform = 'translateY(0)';
                     }
-                }, 800);
+
+                    // Remover wrapper
+                    setTimeout(() => {
+                        if (wrapper.parentNode) {
+                            wrapper.parentNode.removeChild(wrapper);
+                        }
+                    }, 800);
+                }, heroImages.length * 200 + 500);
             }, 200);
             return;
         }
@@ -597,34 +560,27 @@ function fallbackAnimation() {
 
     // Auto-hide del loader si se queda pegado
     window.addEventListener('load', () => {
-        const timeouts = [5000, 10000, 15000]; // 5s, 10s, 15s
+        const timeouts = [10000, 15000, 20000]; // 10s, 15s, 20s
 
         timeouts.forEach((delay, index) => {
-            const timeoutId = setTimeout(() => {
-                // Verificar si el loader aún existe y está visible
+            setTimeout(() => {
                 const wrapper = document.querySelector('.loader-wrapper');
-                if (!wrapper) {
-                    return; // Ya fue removido
-                }
+                if (wrapper) {
+                    const isVisible = window.getComputedStyle(wrapper).display !== 'none';
+                    const hasOpacity = parseFloat(window.getComputedStyle(wrapper).opacity) > 0;
 
-                const isVisible = window.getComputedStyle(wrapper).display !== 'none';
-                const hasOpacity = parseFloat(window.getComputedStyle(wrapper).opacity) > 0;
+                    if (isVisible && hasOpacity) {
+                        console.warn(`🚨 Loader timeout ${index + 1} - forcing cleanup after ${delay}ms`);
 
-                if (isVisible && hasOpacity) {
-                    console.warn(`🚨 Loader timeout ${index + 1} - forcing cleanup after ${delay}ms`);
-
-                    // Usar la función global de limpieza
-                    if (typeof window.forceCleanLoader === 'function') {
-                        window.forceCleanLoader();
-                    } else {
-                        // Fallback directo
+                        // Forzar revelación de todas las imágenes
                         const heroImages = document.querySelectorAll('.hero-img');
                         const navbar = document.querySelector('.navbar5_component');
 
-                        heroImages.forEach(img => {
+                        heroImages.forEach((img, imgIndex) => {
                             img.style.clipPath = 'polygon(0 0%, 100% 0%, 100% 100%, 0 100%)';
                             img.style.opacity = '1';
                             img.style.transform = 'scale(1)';
+                            console.log(`🚨 Emergency: Revealed hero image ${imgIndex + 1}`);
                         });
 
                         if (navbar) {
@@ -641,136 +597,62 @@ function fallbackAnimation() {
                     }
                 }
             }, delay);
-
-            // Guardar timeout ID para limpieza posterior
-            if (window.loaderTimeouts) {
-                window.loaderTimeouts.push(timeoutId);
-            }
         });
     });
 })();
 
-// ===== LENIS SMOOTH SCROLL INTEGRATION =====
-(function () {
-    'use strict';
-
-    setTimeout(function () {
-        if (typeof Lenis === 'undefined') {
-            console.log('⚠️ External Lenis script failed to load, using fallback...');
-            document.documentElement.style.scrollBehavior = 'smooth';
-            return;
-        }
-
-        try {
-            if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-                console.log("🌊 Lenis Smooth Scroll & GSAP Animations Loaded");
-
-                gsap.registerPlugin(ScrollTrigger, TextPlugin);
-
-                let lenis = new Lenis({
-                    lerp: 0.1,
-                    wheelMultiplier: 0.7,
-                    gestureOrientation: "vertical",
-                    normalizeWheel: false,
-                    smoothTouch: false,
-                });
-
-                function raf(time) {
-                    lenis.raf(time);
-                    requestAnimationFrame(raf);
-                }
-                requestAnimationFrame(raf);
-
-                // Lenis + ScrollTrigger integration
-                lenis.on('scroll', ScrollTrigger.update);
-                gsap.ticker.add((time) => {
-                    lenis.raf(time * 1000);
-                });
-                gsap.ticker.lagSmoothing(0);
-
-                console.log("🚀 Lenis smooth scroll initialized successfully!");
-            }
-        } catch (error) {
-            console.log('Error initializing Lenis:', error);
-            document.documentElement.style.scrollBehavior = 'smooth';
-        }
-    }, 2000);
-})();
-
-// ===== ERROR HANDLING =====
-window.addEventListener('error', function (e) {
-    if (e.message && e.message.includes('CORS')) {
-        console.log('🔒 CORS error suppressed:', e.filename);
-        e.preventDefault();
-        return false;
-    }
-});
-
-window.addEventListener('unhandledrejection', function (e) {
-    if (e.reason && e.reason.toString().includes('CORS')) {
-        console.log('🔒 CORS promise rejection suppressed');
-        e.preventDefault();
-        return false;
-    }
-});
-
 // ===== DEBUGGING UTILITIES =====
 window.debugAcuaticaAnimation = {
-    timeline: () => masterTimeline,
-    restart: () => masterTimeline && masterTimeline.restart(),
-    pause: () => masterTimeline && masterTimeline.pause(),
-    play: () => masterTimeline && masterTimeline.play(),
-    seek: (time) => masterTimeline && masterTimeline.seek(time),
-    getProgress: () => masterTimeline ? masterTimeline.progress() : 0,
-    getDuration: () => masterTimeline ? masterTimeline.duration() : 0,
+    timeline: () => window.acuaticaMasterTimeline,
+    restart: () => window.acuaticaMasterTimeline && window.acuaticaMasterTimeline.restart(),
+    pause: () => window.acuaticaMasterTimeline && window.acuaticaMasterTimeline.pause(),
+    play: () => window.acuaticaMasterTimeline && window.acuaticaMasterTimeline.play(),
+    seek: (time) => window.acuaticaMasterTimeline && window.acuaticaMasterTimeline.seek(time),
+    getProgress: () => window.acuaticaMasterTimeline ? window.acuaticaMasterTimeline.progress() : 0,
+    getDuration: () => window.acuaticaMasterTimeline ? window.acuaticaMasterTimeline.duration() : 0,
 
     // Test específicos
     testPreloader: () => {
-        if (masterTimeline) {
-            masterTimeline.pause();
-            masterTimeline.seek(0);
-            masterTimeline.play();
+        if (window.acuaticaMasterTimeline) {
+            window.acuaticaMasterTimeline.pause();
+            window.acuaticaMasterTimeline.seek(0);
+            window.acuaticaMasterTimeline.play();
         }
     },
 
     testReveal: () => {
-        if (masterTimeline) {
-            masterTimeline.pause();
-            masterTimeline.seek(animationConfig.reveal.start);
-            masterTimeline.play();
+        if (window.acuaticaMasterTimeline) {
+            window.acuaticaMasterTimeline.pause();
+            window.acuaticaMasterTimeline.seek(animationConfig.reveal.start);
+            window.acuaticaMasterTimeline.play();
         }
     },
 
-    // Función de emergencia para limpiar todo
-    emergencyClean: () => {
-        console.log('🚨 EMERGENCY CLEANUP INITIATED');
+    // Función para revelar imágenes manualmente (debugging)
+    revealAllImages: () => {
+        const heroImages = document.querySelectorAll('.hero-img');
+        console.log(`🔧 Manually revealing ${heroImages.length} hero images...`);
 
-        // Limpiar timeouts
-        if (window.loaderTimeouts) {
-            window.loaderTimeouts.forEach(timeout => clearTimeout(timeout));
-            window.loaderTimeouts = [];
-        }
+        heroImages.forEach((img, index) => {
+            img.style.clipPath = 'polygon(0 0%, 100% 0%, 100% 100%, 0 100%)';
+            img.style.opacity = '1';
+            img.style.transform = 'scale(1)';
+            console.log(`✅ Revealed hero image ${index + 1}`);
+        });
+    },
 
-        // Detener timeline
-        if (window.masterTimeline) {
-            window.masterTimeline.kill();
-            window.masterTimeline = null;
-        }
-
-        // Forzar limpieza visual
-        if (typeof window.forceCleanLoader === 'function') {
-            window.forceCleanLoader();
-        }
-
-        // Limpiar código residual
-        cleanResidualCode();
-
-        // Reset flags
-        window.loaderInitialized = false;
-        window.loaderCompleted = true;
-        window.loaderStarted = false;
-
-        console.log('✅ EMERGENCY CLEANUP COMPLETED');
+    // Información detallada
+    getInfo: () => {
+        const heroImages = document.querySelectorAll('.hero-img');
+        return {
+            totalDuration: window.acuaticaMasterTimeline ? window.acuaticaMasterTimeline.duration() : 0,
+            currentTime: window.acuaticaMasterTimeline ? window.acuaticaMasterTimeline.time() : 0,
+            progress: window.acuaticaMasterTimeline ? window.acuaticaMasterTimeline.progress() : 0,
+            heroImagesFound: heroImages.length,
+            revealStart: animationConfig.reveal.start,
+            navigationStart: animationConfig.reveal.navigation.start,
+            isFirstVisit: isFirstVisit
+        };
     }
 };
 
@@ -785,19 +667,21 @@ window.debugAcuaticaAnimation = {
  * - 7.5s: Componente del loader se oculta
  * - 8.0s: Preloader se desliza hacia arriba con clip-path
  * 
- * FASE 2: REVELADO HERO (9-14 segundos)
- * - 9.0s: Inicia secuencia de imágenes hero
- * - 9.0-13.5s: Cada imagen se revela con clip-path, zoom dramático, display, y salida
- * - 13.5s: La última imagen (z-index-7) permanece visible
+ * FASE 2: REVELADO HERO (9-16 segundos) - ¡LA PARTE CLAVE!
+ * - 9.0s: Inicia secuencia de 7 imágenes hero
+ * - Cada imagen se revela con clip-path desde abajo
+ * - Efectos de zoom dramático (entrada, display, salida)
+ * - Solo la última imagen (z-index-7) permanece visible
+ * - Secuencia: z-index-1 → z-index-2 → ... → z-index-7
  * 
- * FASE 3: NAVEGACIÓN (14 segundos)
- * - 14.0s: Navbar entra desde arriba con fade-in
+ * FASE 3: NAVEGACIÓN (16 segundos)
+ * - 16.0s: Navbar entra desde arriba con fade-in
  * 
- * TOTAL: ~14 segundos de animación completa con efectos de capas superpuestas
+ * TOTAL: ~16 segundos de animación completa
  * 
  * ESTRUCTURA DE CAPAS:
  * 1. loader-wrapper (z-index: 100) - Preloader superior
  * 2. loader_imgs (z-index: 98) - Contenedor de imágenes hero
- * 3. hero-img.z-index-1 a 7 (z-index: 1-7) - Imágenes superpuestas
+ * 3. hero-img.z-index-1 a 7 (z-index: 1-7) - 7 imágenes superpuestas
  * 4. navbar5_component - Navegación final
  */

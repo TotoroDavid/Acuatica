@@ -1,62 +1,396 @@
-<!DOCTYPE html>
-<!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Fri Aug 08 2025 00:41:20 GMT+0000 (Coordinated Universal Time)  -->
-<html data-wf-page="684af1b88ade38b52a87a9b4" data-wf-site="68484e12a644855a361ecebb">
-
-<head>
-  <meta charset="utf-8">
-  <title>Acuatica: Tu Oasis Inteligente en Piscinas y Zonas Húmedas de Lujo y Automatización en Colombia</title>
-  <meta
-    content="Acuatica: Piscinas y zonas húmedas de lujo en Colombia. Expertos en automatización Pentair, mármol y piedra muñeca. ¡Controla tu oasis desde el móvil! Asesoría gratuita."
-    name="description">
-  <meta content="Acuatica: Tu Oasis Inteligente en Piscinas y Zonas Húmedas de Lujo y Automatización en Colombia"
-    property="og:title">
-  <meta
-    content="Acuatica: Piscinas y zonas húmedas de lujo en Colombia. Expertos en automatización Pentair, mármol y piedra muñeca. ¡Controla tu oasis desde el móvil! Asesoría gratuita."
-    property="og:description">
-  <meta content="https://cdn.prod.website-files.com/68484e12a644855a361ecebb/688766f9bffcb2ee98aefe6c_loader_logo.png"
-    property="og:image">
-  <meta content="Acuatica: Tu Oasis Inteligente en Piscinas y Zonas Húmedas de Lujo y Automatización en Colombia"
-    property="twitter:title">
-  <meta
-    content="Acuatica: Piscinas y zonas húmedas de lujo en Colombia. Expertos en automatización Pentair, mármol y piedra muñeca. ¡Controla tu oasis desde el móvil! Asesoría gratuita."
-    property="twitter:description">
-  <meta property="og:type" content="website">
-  <meta content="summary_large_image" name="twitter:card">
-  <meta content="width=device-width, initial-scale=1" name="viewport">
-  <meta content="Webflow" name="generator">
-  <link href="css/normalize.css" rel="stylesheet" type="text/css">
-  <link href="css/webflow.css" rel="stylesheet" type="text/css">
-  <link href="css/acuatica-a26986.webflow.css" rel="stylesheet" type="text/css">
-  <link href="https://fonts.googleapis.com" rel="preconnect">
-  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin="anonymous">
-  <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js" type="text/javascript"></script>
-  <script
-    type="text/javascript">WebFont.load({ google: { families: ["Montserrat:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic", "Oswald:200,300,400,500,600,700"] } });</script>
-  <script
-    type="text/javascript">!function (o, c) { var n = c.documentElement, t = " w-mod-"; n.className += t + "js", ("ontouchstart" in o || o.DocumentTouch && c instanceof DocumentTouch) && (n.className += t + "touch") }(window, document);</script>
-  <link href="images/favicon.png" rel="shortcut icon" type="image/x-icon">
-  <link href="images/webclip.png" rel="apple-touch-icon"><!--  Keep this css code to improve the font quality -->
-  <style>
-    * {
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      -o-font-smoothing: antialiased;
-    }
-  </style>
-</head>
-
 <body>
   <div class="page-wrapper">
+    <div class="global-styles">
+      <div class="style-overrides w-embed">
+        <style>
+          /* Ensure all elements inherit the color from its parent */
+          a,
+          .w-input,
+          .w-select,
+          .w-tab-link,
+          .w-nav-link,
+          .w-nav-brand,
+          .w-dropdown-btn,
+          .w-dropdown-toggle,
+          .w-slider-arrow-left,
+          .w-slider-arrow-right,
+          .w-dropdown-link {
+            color: inherit;
+            text-decoration: inherit;
+            font-size: inherit;
+          }
+
+          /* Focus state style for keyboard navigation for the focusable elements */
+          *[tabindex]:focus-visible,
+          input[type="file"]:focus-visible {
+            outline: 0.125rem solid #4d65ff;
+            outline-offset: 0.125rem;
+          }
+
+          /* Get rid of top margin on first element in any rich text element */
+          .w-richtext> :not(div):first-child,
+          .w-richtext>div:first-child> :first-child {
+            margin-top: 0 !important;
+          }
+
+          /* Get rid of bottom margin on last element in any rich text element */
+          .w-richtext>:last-child,
+          .w-richtext ol li:last-child,
+          .w-richtext ul li:last-child {
+            margin-bottom: 0 !important;
+          }
+
+          /* Prevent all click and hover interaction with an element */
+          .pointer-events-off {
+            pointer-events: none;
+          }
+
+          /* Enables all click and hover interaction with an element */
+          .pointer-events-on {
+            pointer-events: auto;
+          }
+
+          /* Create a class of .div-square which maintains a 1:1 dimension of a div */
+          .div-square::after {
+            content: "";
+            display: block;
+            padding-bottom: 100%;
+          }
+
+          /* Make sure containers never lose their center alignment */
+          .container-medium,
+          .container-small,
+          .container-large {
+            margin-right: auto !important;
+            margin-left: auto !important;
+          }
+
+          /* Apply "..." after 3 lines of text */
+          .text-style-3lines {
+            display: -webkit-box;
+            overflow: hidden;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+          }
+
+          /* Apply "..." after 2 lines of text */
+          .text-style-2lines {
+            display: -webkit-box;
+            overflow: hidden;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+          }
+
+          /* Adds inline flex display */
+          .display-inlineflex {
+            display: inline-flex;
+          }
+
+          /* These classes are never overwritten */
+          .hide {
+            display: none !important;
+          }
+
+          /* Remove default Webflow chevron from form select */
+          select {
+            -webkit-appearance: none;
+          }
+
+          @media screen and (max-width: 991px) {
+
+            .hide,
+            .hide-tablet {
+              display: none !important;
+            }
+          }
+
+          @media screen and (max-width: 767px) {
+            .hide-mobile-landscape {
+              display: none !important;
+            }
+          }
+
+          @media screen and (max-width: 479px) {
+            .hide-mobile {
+              display: none !important;
+            }
+          }
+
+          .margin-0 {
+            margin: 0rem !important;
+          }
+
+          .padding-0 {
+            padding: 0rem !important;
+          }
+
+          .spacing-clean {
+            padding: 0rem !important;
+            margin: 0rem !important;
+          }
+
+          .margin-top {
+            margin-right: 0rem !important;
+            margin-bottom: 0rem !important;
+            margin-left: 0rem !important;
+          }
+
+          .padding-top {
+            padding-right: 0rem !important;
+            padding-bottom: 0rem !important;
+            padding-left: 0rem !important;
+          }
+
+          .margin-right {
+            margin-top: 0rem !important;
+            margin-bottom: 0rem !important;
+            margin-left: 0rem !important;
+          }
+
+          .padding-right {
+            padding-top: 0rem !important;
+            padding-bottom: 0rem !important;
+            padding-left: 0rem !important;
+          }
+
+          .margin-bottom {
+            margin-top: 0rem !important;
+            margin-right: 0rem !important;
+            margin-left: 0rem !important;
+          }
+
+          .padding-bottom {
+            padding-top: 0rem !important;
+            padding-right: 0rem !important;
+            padding-left: 0rem !important;
+          }
+
+          .margin-left {
+            margin-top: 0rem !important;
+            margin-right: 0rem !important;
+            margin-bottom: 0rem !important;
+          }
+
+          .padding-left {
+            padding-top: 0rem !important;
+            padding-right: 0rem !important;
+            padding-bottom: 0rem !important;
+          }
+
+          .margin-horizontal {
+            margin-top: 0rem !important;
+            margin-bottom: 0rem !important;
+          }
+
+          .padding-horizontal {
+            padding-top: 0rem !important;
+            padding-bottom: 0rem !important;
+          }
+
+          .margin-vertical {
+            margin-right: 0rem !important;
+            margin-left: 0rem !important;
+          }
+
+          .padding-vertical {
+            padding-right: 0rem !important;
+            padding-left: 0rem !important;
+          }
+
+          /* Apply "..." at 100% width */
+          .truncate-width {
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+
+          /* Removes native scrollbar */
+          .no-scrollbar {
+            -ms-overflow-style: none;
+            overflow: -moz-scrollbars-none;
+          }
+
+          .no-scrollbar::-webkit-scrollbar {
+            display: none;
+          }
+
+          .navbar_link {
+            color: white !important;
+          }
+
+          .preloader {
+            display: flex;
+          }
+        </style>
+      </div>
+      <div class="color-schemes w-embed">
+        <style>
+          /* Color Schemes Controls*/
+          <meta name="relume-color-schemes" content="false" />.color-scheme-1 {
+            /*All sections should point to Color Scheme 1*/
+          }
+
+          .color-scheme-2 {
+            --color-scheme-1--text: var(--color-scheme-2--text);
+            --color-scheme-1--background: var(--color-scheme-2--background);
+            --color-scheme-1--foreground: var(--color-scheme-2--foreground);
+            --color-scheme-1--border: var(--color-scheme-2--border);
+            --color-scheme-1--accent: var(--color-scheme-2--accent);
+          }
+
+          .color-scheme-3 {
+            --color-scheme-1--text: var(--color-scheme-3--text);
+            --color-scheme-1--background: var(--color-scheme-3--background);
+            --color-scheme-1--foreground: var(--color-scheme-3--foreground);
+            --color-scheme-1--border: var(--color-scheme-3--border);
+            --color-scheme-1--accent: var(--color-scheme-3--accent);
+          }
+
+          .color-scheme-4 {
+            --color-scheme-1--text: var(--color-scheme-4--text);
+            --color-scheme-1--background: var(--color-scheme-4--background);
+            --color-scheme-1--foreground: var(--color-scheme-4--foreground);
+            --color-scheme-1--border: var(--color-scheme-4--border);
+            --color-scheme-1--accent: var(--color-scheme-4--accent);
+          }
+
+          .color-scheme-5 {
+            --color-scheme-1--text: var(--color-scheme-5--text);
+            --color-scheme-1--background: var(--color-scheme-5--background);
+            --color-scheme-1--foreground: var(--color-scheme-5--foreground);
+            --color-scheme-1--border: var(--color-scheme-5--border);
+            --color-scheme-1--accent: var(--color-scheme-5--accent);
+          }
+
+          .color-scheme-6 {
+            --color-scheme-1--text: var(--color-scheme-6--text);
+            --color-scheme-1--background: var(--color-scheme-6--background);
+            --color-scheme-1--foreground: var(--color-scheme-6--foreground);
+            --color-scheme-1--border: var(--color-scheme-6--border);
+            --color-scheme-1--accent: var(--color-scheme-6--accent);
+          }
+
+          .color-scheme-7 {
+            --color-scheme-1--text: var(--color-scheme-7--text);
+            --color-scheme-1--background: var(--color-scheme-7--background);
+            --color-scheme-1--foreground: var(--color-scheme-7--foreground);
+            --color-scheme-1--border: var(--color-scheme-7--border);
+            --color-scheme-1--accent: var(--color-scheme-7--accent);
+          }
+
+          .color-scheme-8 {
+            --color-scheme-1--text: var(--color-scheme-8--text);
+            --color-scheme-1--background: var(--color-scheme-8--background);
+            --color-scheme-1--foreground: var(--color-scheme-8--foreground);
+            --color-scheme-1--border: var(--color-scheme-8--border);
+            --color-scheme-1--accent: var(--color-scheme-8--accent);
+          }
+
+          .color-scheme-9 {
+            --color-scheme-1--text: var(--color-scheme-9--text);
+            --color-scheme-1--background: var(--color-scheme-9--background);
+            --color-scheme-1--foreground: var(--color-scheme-9--foreground);
+            --color-scheme-1--border: var(--color-scheme-9--border);
+            --color-scheme-1--accent: var(--color-scheme-9--accent);
+          }
+
+          .color-scheme-10 {
+            --color-scheme-1--text: var(--color-scheme-10--text);
+            --color-scheme-1--background: var(--color-scheme-10--background);
+            --color-scheme-1--foreground: var(--color-scheme-10--foreground);
+            --color-scheme-1--border: var(--color-scheme-10--border);
+            --color-scheme-1--accent: var(--color-scheme-10--accent);
+          }
+
+          /* Inherit slider dot colors */
+          .w-slider-dot {
+            background-color: var(--color-scheme-1--text);
+            opacity: 0.20;
+          }
+
+          .w-slider-dot.w-active {
+            background-color: var(--color-scheme-1--text);
+            opacity: 1;
+          }
+
+          /* Override .w-slider-nav-invert styles */
+          .w-slider-nav-invert .w-slider-dot {
+            background-color: var(--color-scheme-1--text) !important;
+            opacity: 0.20 !important;
+          }
+
+          .w-slider-nav-invert .w-slider-dot.w-active {
+            background-color: var(--color-scheme-1--text) !important;
+            opacity: 1 !important;
+          }
+        </style>
+      </div>
+      <div class="code-embed w-embed w-script">
+        <script>
+          document.addEventListener("DOMContentLoaded", () => {
+            // --- English comments as requested ---
+            // Configuration
+            const VIDEO_LOAD_TIMEOUT = 5000; // 5 seconds
+            /**
+             * Attempts to load a video element.
+             * Returns a Promise that resolves on 'canplay' and rejects on 'error'.
+             */
+            const loadVideo = (video) => {
+              return new Promise((resolve, reject) => {
+                video.addEventListener('canplay', resolve, { once: true });
+                video.addEventListener('error', reject, { once: true });
+              });
+            };
+            /**
+             * Creates a promise that rejects after a specified time.
+             */
+            const createTimeout = (ms) => {
+              return new Promise((_, reject) => {
+                setTimeout(() => reject(new Error('Video loading timed out')), ms);
+              });
+            };
+            /**
+             * Main function to process each video wrapper.
+             */
+            const processVideoWrapper = async (wrapper, index) => {
+              const video = wrapper.querySelector('video[data-src]');
+              const image = wrapper.querySelector('img.tab-image');
+              if (!video || !image) return;
+              const videoSrc = video.getAttribute('data-src');
+              console.log(`[Video Loader #${index + 1}] Found video. Attempting to load: ${videoSrc}`);
+              try {
+                // Start loading the video by setting its src
+                video.src = videoSrc;
+                // Race the video load against our timeout
+                await Promise.race([loadVideo(video), createTimeout(VIDEO_LOAD_TIMEOUT)]);
+                // If we get here, the video loaded in time
+                video.classList.add('is-loaded');
+                image.classList.add('is-hidden');
+                video.play();
+                console.log(`%c[Video Loader #${index + 1}] Success: Video loaded and is playing.`, 'color: green;');
+              } catch (error) {
+                // If we get here, the video failed or timed out
+                console.error(`%c[Video Loader #${index + 1}] Failure: ${error.message}. Displaying fallback image.`, 'color: red;');
+              }
+            };
+            // Find all DIV wrappers and process them. This selector is now more specific.
+            const videoWrappers = document.querySelectorAll('div.header_tab-image-wrapper');
+            videoWrappers.forEach(processVideoWrapper);
+          });
+        </script>
+      </div>
+    </div>
     <div class="loader-wrapper">
-      <div fs-scrolldisable-element="when-visible" style="display: flex; opacity: 1;" class="loader5_component">
+      <div fs-scrolldisable-element="when-visible" style="display:flex;opacity:1" class="loader5_component">
         <div data-w-id="c681c04e-9cd1-65a3-4b77-29e07c8cf36a" class="loader5_ix-trigger"></div>
         <div
-          style="transform: translate3d(0px, 0%, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg); transform-style: preserve-3d;"
+          style="-webkit-transform:translate3d(0, 0%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 0%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 0%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 0%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)"
           class="loader5_progress">
           <div class="loader5_progress-bar"></div>
         </div>
         <div
-          style="transform: translate3d(0px, 0%, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg); transform-style: preserve-3d;"
+          style="-webkit-transform:translate3d(0, 0%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 0%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 0%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 0%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)"
           class="loader5_progress-content">
           <div class="loader5_text-wrapper">
             <div class="loader5_number">20</div>
@@ -65,48 +399,34 @@
         </div>
       </div>
       <div class="loader_imgs">
-        <div class="hero-imgs"><img
-            src="https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf796902e3bcacc3ad4_swimming-pool-resort.webp"
-            loading="lazy" sizes="(max-width: 6000px) 100vw, 6000px"
-            srcset="https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf796902e3bcacc3ad4_swimming-pool-resort-p-500.webp 500w, https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf796902e3bcacc3ad4_swimming-pool-resort-p-800.webp 800w, https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf796902e3bcacc3ad4_swimming-pool-resort-p-1080.webp 1080w, https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf796902e3bcacc3ad4_swimming-pool-resort-p-1600.webp 1600w, https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf796902e3bcacc3ad4_swimming-pool-resort-p-2000.webp 2000w, https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf796902e3bcacc3ad4_swimming-pool-resort.webp 6000w"
-            alt="" class="hero-img z-index-1"
-            style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px);"><img
-            src="https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf64fc6f6dd3444206c_summer-pool-concept-with-woman-inflatable-unicorn.webp"
+        <div class="hero-imgs"><img src="images/swimming-pool-resort.webp" loading="lazy"
+            sizes="(max-width: 6000px) 100vw, 6000px"
+            srcset="images/swimming-pool-resort-p-500.webp 500w, images/swimming-pool-resort-p-800.webp 800w, images/swimming-pool-resort-p-1080.webp 1080w, images/swimming-pool-resort-p-1600.webp 1600w, images/swimming-pool-resort-p-2000.webp 2000w, images/swimming-pool-resort.webp 6000w"
+            alt="" class="hero-img z-index-1"><img src="images/summer-pool-concept-with-woman-inflatable-unicorn.webp"
             loading="lazy" sizes="(max-width: 3849px) 100vw, 3849px"
-            srcset="https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf64fc6f6dd3444206c_summer-pool-concept-with-woman-inflatable-unicorn-p-500.webp 500w, https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf64fc6f6dd3444206c_summer-pool-concept-with-woman-inflatable-unicorn-p-800.webp 800w, https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf64fc6f6dd3444206c_summer-pool-concept-with-woman-inflatable-unicorn-p-1080.webp 1080w, https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf64fc6f6dd3444206c_summer-pool-concept-with-woman-inflatable-unicorn-p-1600.webp 1600w, https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf64fc6f6dd3444206c_summer-pool-concept-with-woman-inflatable-unicorn.webp 3849w"
-            alt="" class="hero-img z-index-2"
-            style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px);"><img
-            src="https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf50b85660175541c3a_pexels-babix-7391720.webp"
-            loading="lazy" sizes="(max-width: 3000px) 100vw, 3000px"
-            srcset="https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf50b85660175541c3a_pexels-babix-7391720-p-500.webp 500w, https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf50b85660175541c3a_pexels-babix-7391720-p-800.webp 800w, https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf50b85660175541c3a_pexels-babix-7391720-p-1080.webp 1080w, https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf50b85660175541c3a_pexels-babix-7391720-p-1600.webp 1600w, https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf50b85660175541c3a_pexels-babix-7391720.webp 3000w"
-            alt="" class="hero-img z-index-3"
-            style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px);"><img
-            src="https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf5cbc040107d8be7fc_deckchair-swimming-pool.webp"
-            loading="lazy" sizes="(max-width: 4896px) 100vw, 4896px"
-            srcset="https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf5cbc040107d8be7fc_deckchair-swimming-pool-p-500.webp 500w, https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf5cbc040107d8be7fc_deckchair-swimming-pool-p-800.webp 800w, https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf5cbc040107d8be7fc_deckchair-swimming-pool-p-1080.webp 1080w, https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf5cbc040107d8be7fc_deckchair-swimming-pool-p-1600.webp 1600w, https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf5cbc040107d8be7fc_deckchair-swimming-pool-p-2000.webp 2000w, https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf5cbc040107d8be7fc_deckchair-swimming-pool.webp 4896w"
-            alt="" class="hero-img z-index-4"
-            style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px);"><img
-            src="https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf6342d983850900771_pexels-pixabay-221457.webp"
-            loading="lazy" sizes="(max-width: 5320px) 100vw, 5320px"
-            srcset="https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf6342d983850900771_pexels-pixabay-221457-p-500.webp 500w, https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf6342d983850900771_pexels-pixabay-221457-p-800.webp 800w, https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf6342d983850900771_pexels-pixabay-221457-p-1080.webp 1080w, https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf6342d983850900771_pexels-pixabay-221457-p-1600.webp 1600w, https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf6342d983850900771_pexels-pixabay-221457-p-2000.webp 2000w, https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf6342d983850900771_pexels-pixabay-221457.webp 5320w"
-            alt="" class="hero-img z-index-5"
-            style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px);"><img
-            src="https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf64be358d2650ba707_summer-edge-freedom-model-fresh.webp"
-            loading="lazy" sizes="(max-width: 2448px) 100vw, 2448px"
-            srcset="https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf64be358d2650ba707_summer-edge-freedom-model-fresh-p-500.webp 500w, https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf64be358d2650ba707_summer-edge-freedom-model-fresh-p-800.webp 800w, https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf64be358d2650ba707_summer-edge-freedom-model-fresh-p-1080.webp 1080w, https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6887dcf64be358d2650ba707_summer-edge-freedom-model-fresh.webp 2448w"
-            alt="" class="hero-img z-index-6"
-            style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px);"><img
-            src="https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6883ce21504393eb43c5da62_pexels-marctutorials-298692-870170.webp"
-            loading="lazy" sizes="(max-width: 1728px) 100vw, 1728px"
-            srcset="https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6883ce21504393eb43c5da62_pexels-marctutorials-298692-870170-p-500.webp 500w, https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6883ce21504393eb43c5da62_pexels-marctutorials-298692-870170-p-800.webp 800w, https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6883ce21504393eb43c5da62_pexels-marctutorials-298692-870170-p-1080.webp 1080w, https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6883ce21504393eb43c5da62_pexels-marctutorials-298692-870170-p-1600.webp 1600w, https://cdn.prod.website-files.com/68484e12a644855a361ecebb/6883ce21504393eb43c5da62_pexels-marctutorials-298692-870170.webp 1728w"
-            alt="" class="hero-img z-index-7"
-            style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px);"></div>
+            srcset="images/summer-pool-concept-with-woman-inflatable-unicorn-p-500.webp 500w, images/summer-pool-concept-with-woman-inflatable-unicorn-p-800.webp 800w, images/summer-pool-concept-with-woman-inflatable-unicorn-p-1080.webp 1080w, images/summer-pool-concept-with-woman-inflatable-unicorn-p-1600.webp 1600w, images/summer-pool-concept-with-woman-inflatable-unicorn.webp 3849w"
+            alt="" class="hero-img z-index-2"><img src="images/pexels-babix-7391720.webp" loading="lazy"
+            sizes="(max-width: 3000px) 100vw, 3000px"
+            srcset="images/pexels-babix-7391720-p-500.webp 500w, images/pexels-babix-7391720-p-800.webp 800w, images/pexels-babix-7391720-p-1080.webp 1080w, images/pexels-babix-7391720-p-1600.webp 1600w, images/pexels-babix-7391720.webp 3000w"
+            alt="" class="hero-img z-index-3"><img src="images/deckchair-swimming-pool.webp" loading="lazy"
+            sizes="(max-width: 4896px) 100vw, 4896px"
+            srcset="images/deckchair-swimming-pool-p-500.webp 500w, images/deckchair-swimming-pool-p-800.webp 800w, images/deckchair-swimming-pool-p-1080.webp 1080w, images/deckchair-swimming-pool-p-1600.webp 1600w, images/deckchair-swimming-pool-p-2000.webp 2000w, images/deckchair-swimming-pool.webp 4896w"
+            alt="" class="hero-img z-index-4"><img src="images/pexels-pixabay-221457.webp" loading="lazy"
+            sizes="(max-width: 5320px) 100vw, 5320px"
+            srcset="images/pexels-pixabay-221457-p-500.webp 500w, images/pexels-pixabay-221457-p-800.webp 800w, images/pexels-pixabay-221457-p-1080.webp 1080w, images/pexels-pixabay-221457-p-1600.webp 1600w, images/pexels-pixabay-221457-p-2000.webp 2000w, images/pexels-pixabay-221457.webp 5320w"
+            alt="" class="hero-img z-index-5"><img src="images/summer-edge-freedom-model-fresh.webp" loading="lazy"
+            sizes="(max-width: 2448px) 100vw, 2448px"
+            srcset="images/summer-edge-freedom-model-fresh-p-500.webp 500w, images/summer-edge-freedom-model-fresh-p-800.webp 800w, images/summer-edge-freedom-model-fresh-p-1080.webp 1080w, images/summer-edge-freedom-model-fresh.webp 2448w"
+            alt="" class="hero-img z-index-6"><img src="images/pexels-marctutorials-298692-870170.webp" loading="lazy"
+            sizes="(max-width: 1728px) 100vw, 1728px"
+            srcset="images/pexels-marctutorials-298692-870170-p-500.webp 500w, images/pexels-marctutorials-298692-870170-p-800.webp 800w, images/pexels-marctutorials-298692-870170-p-1080.webp 1080w, images/pexels-marctutorials-298692-870170-p-1600.webp 1600w, images/pexels-marctutorials-298692-870170.webp 1728w"
+            alt="" class="hero-img z-index-7"></div>
       </div>
     </div>
     <div fs-scrolldisable-element="smart-nav" data-animation="default" data-collapse="medium" data-duration="400"
       data-easing="ease" data-easing2="ease" role="banner" class="navbar5_component w-nav">
       <div class="navbar5_container">
-        <a href="#" class="navbar5_logo-link w-nav-brand"><img sizes="(max-width: 634px) 100vw, 634px"
+        <a href="#" class="navbar5_logo-link w-nav-brand"><img sizes="(max-width: 646px) 98vw, 634px"
             srcset="images/asset-15-p-500.png 500w, images/asset-15.png 634w" alt="" src="images/asset-15.png"
             loading="lazy" class="navbar5_logo"></a>
         <nav role="navigation" class="navbar5_menu hide w-nav-menu">
@@ -340,383 +660,6 @@
             <div class="menu-icon1_line-bottom"></div>
           </div>
         </div>
-      </div>
-    </div>
-    <div class="global-styles">
-      <div class="style-overrides w-embed">
-        <style>
-          /* Ensure all elements inherit the color from its parent */
-          a,
-          .w-input,
-          .w-select,
-          .w-tab-link,
-          .w-nav-link,
-          .w-nav-brand,
-          .w-dropdown-btn,
-          .w-dropdown-toggle,
-          .w-slider-arrow-left,
-          .w-slider-arrow-right,
-          .w-dropdown-link {
-            color: inherit;
-            text-decoration: inherit;
-            font-size: inherit;
-          }
-
-          /* Focus state style for keyboard navigation for the focusable elements */
-          *[tabindex]:focus-visible,
-          input[type="file"]:focus-visible {
-            outline: 0.125rem solid #4d65ff;
-            outline-offset: 0.125rem;
-          }
-
-          /* Get rid of top margin on first element in any rich text element */
-          .w-richtext> :not(div):first-child,
-          .w-richtext>div:first-child> :first-child {
-            margin-top: 0 !important;
-          }
-
-          /* Get rid of bottom margin on last element in any rich text element */
-          .w-richtext>:last-child,
-          .w-richtext ol li:last-child,
-          .w-richtext ul li:last-child {
-            margin-bottom: 0 !important;
-          }
-
-          /* Prevent all click and hover interaction with an element */
-          .pointer-events-off {
-            pointer-events: none;
-          }
-
-          /* Enables all click and hover interaction with an element */
-          .pointer-events-on {
-            pointer-events: auto;
-          }
-
-          /* Create a class of .div-square which maintains a 1:1 dimension of a div */
-          .div-square::after {
-            content: "";
-            display: block;
-            padding-bottom: 100%;
-          }
-
-          /* Make sure containers never lose their center alignment */
-          .container-medium,
-          .container-small,
-          .container-large {
-            margin-right: auto !important;
-            margin-left: auto !important;
-          }
-
-          /* Apply "..." after 3 lines of text */
-          .text-style-3lines {
-            display: -webkit-box;
-            overflow: hidden;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-          }
-
-          /* Apply "..." after 2 lines of text */
-          .text-style-2lines {
-            display: -webkit-box;
-            overflow: hidden;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-          }
-
-          /* Adds inline flex display */
-          .display-inlineflex {
-            display: inline-flex;
-          }
-
-          /* These classes are never overwritten */
-          .hide {
-            display: none !important;
-          }
-
-          /* Remove default Webflow chevron from form select */
-          select {
-            -webkit-appearance: none;
-          }
-
-          @media screen and (max-width: 991px) {
-
-            .hide,
-            .hide-tablet {
-              display: none !important;
-            }
-          }
-
-          @media screen and (max-width: 767px) {
-            .hide-mobile-landscape {
-              display: none !important;
-            }
-          }
-
-          @media screen and (max-width: 479px) {
-            .hide-mobile {
-              display: none !important;
-            }
-          }
-
-          .margin-0 {
-            margin: 0rem !important;
-          }
-
-          .padding-0 {
-            padding: 0rem !important;
-          }
-
-          .spacing-clean {
-            padding: 0rem !important;
-            margin: 0rem !important;
-          }
-
-          .margin-top {
-            margin-right: 0rem !important;
-            margin-bottom: 0rem !important;
-            margin-left: 0rem !important;
-          }
-
-          .padding-top {
-            padding-right: 0rem !important;
-            padding-bottom: 0rem !important;
-            padding-left: 0rem !important;
-          }
-
-          .margin-right {
-            margin-top: 0rem !important;
-            margin-bottom: 0rem !important;
-            margin-left: 0rem !important;
-          }
-
-          .padding-right {
-            padding-top: 0rem !important;
-            padding-bottom: 0rem !important;
-            padding-left: 0rem !important;
-          }
-
-          .margin-bottom {
-            margin-top: 0rem !important;
-            margin-right: 0rem !important;
-            margin-left: 0rem !important;
-          }
-
-          .padding-bottom {
-            padding-top: 0rem !important;
-            padding-right: 0rem !important;
-            padding-left: 0rem !important;
-          }
-
-          .margin-left {
-            margin-top: 0rem !important;
-            margin-right: 0rem !important;
-            margin-bottom: 0rem !important;
-          }
-
-          .padding-left {
-            padding-top: 0rem !important;
-            padding-right: 0rem !important;
-            padding-bottom: 0rem !important;
-          }
-
-          .margin-horizontal {
-            margin-top: 0rem !important;
-            margin-bottom: 0rem !important;
-          }
-
-          .padding-horizontal {
-            padding-top: 0rem !important;
-            padding-bottom: 0rem !important;
-          }
-
-          .margin-vertical {
-            margin-right: 0rem !important;
-            margin-left: 0rem !important;
-          }
-
-          .padding-vertical {
-            padding-right: 0rem !important;
-            padding-left: 0rem !important;
-          }
-
-          /* Apply "..." at 100% width */
-          .truncate-width {
-            width: 100%;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-          }
-
-          /* Removes native scrollbar */
-          .no-scrollbar {
-            -ms-overflow-style: none;
-            overflow: -moz-scrollbars-none;
-          }
-
-          .no-scrollbar::-webkit-scrollbar {
-            display: none;
-          }
-
-          .navbar_link {
-            color: white !important;
-          }
-        </style>
-      </div>
-      <div class="color-schemes w-embed">
-        <style>
-          /* Color Schemes Controls*/
-          <meta name="relume-color-schemes" content="false" />.color-scheme-1 {
-            /*All sections should point to Color Scheme 1*/
-          }
-
-          .color-scheme-2 {
-            --color-scheme-1--text: var(--color-scheme-2--text);
-            --color-scheme-1--background: var(--color-scheme-2--background);
-            --color-scheme-1--foreground: var(--color-scheme-2--foreground);
-            --color-scheme-1--border: var(--color-scheme-2--border);
-            --color-scheme-1--accent: var(--color-scheme-2--accent);
-          }
-
-          .color-scheme-3 {
-            --color-scheme-1--text: var(--color-scheme-3--text);
-            --color-scheme-1--background: var(--color-scheme-3--background);
-            --color-scheme-1--foreground: var(--color-scheme-3--foreground);
-            --color-scheme-1--border: var(--color-scheme-3--border);
-            --color-scheme-1--accent: var(--color-scheme-3--accent);
-          }
-
-          .color-scheme-4 {
-            --color-scheme-1--text: var(--color-scheme-4--text);
-            --color-scheme-1--background: var(--color-scheme-4--background);
-            --color-scheme-1--foreground: var(--color-scheme-4--foreground);
-            --color-scheme-1--border: var(--color-scheme-4--border);
-            --color-scheme-1--accent: var(--color-scheme-4--accent);
-          }
-
-          .color-scheme-5 {
-            --color-scheme-1--text: var(--color-scheme-5--text);
-            --color-scheme-1--background: var(--color-scheme-5--background);
-            --color-scheme-1--foreground: var(--color-scheme-5--foreground);
-            --color-scheme-1--border: var(--color-scheme-5--border);
-            --color-scheme-1--accent: var(--color-scheme-5--accent);
-          }
-
-          .color-scheme-6 {
-            --color-scheme-1--text: var(--color-scheme-6--text);
-            --color-scheme-1--background: var(--color-scheme-6--background);
-            --color-scheme-1--foreground: var(--color-scheme-6--foreground);
-            --color-scheme-1--border: var(--color-scheme-6--border);
-            --color-scheme-1--accent: var(--color-scheme-6--accent);
-          }
-
-          .color-scheme-7 {
-            --color-scheme-1--text: var(--color-scheme-7--text);
-            --color-scheme-1--background: var(--color-scheme-7--background);
-            --color-scheme-1--foreground: var(--color-scheme-7--foreground);
-            --color-scheme-1--border: var(--color-scheme-7--border);
-            --color-scheme-1--accent: var(--color-scheme-7--accent);
-          }
-
-          .color-scheme-8 {
-            --color-scheme-1--text: var(--color-scheme-8--text);
-            --color-scheme-1--background: var(--color-scheme-8--background);
-            --color-scheme-1--foreground: var(--color-scheme-8--foreground);
-            --color-scheme-1--border: var(--color-scheme-8--border);
-            --color-scheme-1--accent: var(--color-scheme-8--accent);
-          }
-
-          .color-scheme-9 {
-            --color-scheme-1--text: var(--color-scheme-9--text);
-            --color-scheme-1--background: var(--color-scheme-9--background);
-            --color-scheme-1--foreground: var(--color-scheme-9--foreground);
-            --color-scheme-1--border: var(--color-scheme-9--border);
-            --color-scheme-1--accent: var(--color-scheme-9--accent);
-          }
-
-          .color-scheme-10 {
-            --color-scheme-1--text: var(--color-scheme-10--text);
-            --color-scheme-1--background: var(--color-scheme-10--background);
-            --color-scheme-1--foreground: var(--color-scheme-10--foreground);
-            --color-scheme-1--border: var(--color-scheme-10--border);
-            --color-scheme-1--accent: var(--color-scheme-10--accent);
-          }
-
-          /* Inherit slider dot colors */
-          .w-slider-dot {
-            background-color: var(--color-scheme-1--text);
-            opacity: 0.20;
-          }
-
-          .w-slider-dot.w-active {
-            background-color: var(--color-scheme-1--text);
-            opacity: 1;
-          }
-
-          /* Override .w-slider-nav-invert styles */
-          .w-slider-nav-invert .w-slider-dot {
-            background-color: var(--color-scheme-1--text) !important;
-            opacity: 0.20 !important;
-          }
-
-          .w-slider-nav-invert .w-slider-dot.w-active {
-            background-color: var(--color-scheme-1--text) !important;
-            opacity: 1 !important;
-          }
-        </style>
-      </div>
-      <div class="code-embed w-embed w-script">
-        <script>
-          document.addEventListener("DOMContentLoaded", () => {
-            // --- English comments as requested ---
-            // Configuration
-            const VIDEO_LOAD_TIMEOUT = 5000; // 5 seconds
-            /**
-             * Attempts to load a video element.
-             * Returns a Promise that resolves on 'canplay' and rejects on 'error'.
-             */
-            const loadVideo = (video) => {
-              return new Promise((resolve, reject) => {
-                video.addEventListener('canplay', resolve, { once: true });
-                video.addEventListener('error', reject, { once: true });
-              });
-            };
-            /**
-             * Creates a promise that rejects after a specified time.
-             */
-            const createTimeout = (ms) => {
-              return new Promise((_, reject) => {
-                setTimeout(() => reject(new Error('Video loading timed out')), ms);
-              });
-            };
-            /**
-             * Main function to process each video wrapper.
-             */
-            const processVideoWrapper = async (wrapper, index) => {
-              const video = wrapper.querySelector('video[data-src]');
-              const image = wrapper.querySelector('img.tab-image');
-              if (!video || !image) return;
-              const videoSrc = video.getAttribute('data-src');
-              console.log(`[Video Loader #${index + 1}] Found video. Attempting to load: ${videoSrc}`);
-              try {
-                // Start loading the video by setting its src
-                video.src = videoSrc;
-                // Race the video load against our timeout
-                await Promise.race([loadVideo(video), createTimeout(VIDEO_LOAD_TIMEOUT)]);
-                // If we get here, the video loaded in time
-                video.classList.add('is-loaded');
-                image.classList.add('is-hidden');
-                video.play();
-                console.log(`%c[Video Loader #${index + 1}] Success: Video loaded and is playing.`, 'color: green;');
-              } catch (error) {
-                // If we get here, the video failed or timed out
-                console.error(`%c[Video Loader #${index + 1}] Failure: ${error.message}. Displaying fallback image.`, 'color: red;');
-              }
-            };
-            // Find all DIV wrappers and process them. This selector is now more specific.
-            const videoWrappers = document.querySelectorAll('div.header_tab-image-wrapper');
-            videoWrappers.forEach(processVideoWrapper);
-          });
-        </script>
       </div>
     </div>
     <div class="whatsapp-block">
@@ -2220,7 +2163,7 @@
               <div class="w-layout-grid footer3_top-wrapper">
                 <div class="footer3_left-wrapper">
                   <div class="margin-bottom margin-medium">
-                    <a href="#" class="footer3_logo-link w-nav-brand"><img sizes="(max-width: 634px) 100vw, 634px"
+                    <a href="#" class="footer3_logo-link w-nav-brand"><img sizes="(max-width: 646px) 98vw, 634px"
                         srcset="images/logo2-p-500.png 500w, images/logo2.png 634w" alt="" src="images/logo2.png"
                         loading="lazy" class="footer3_logo"></a>
                   </div>
@@ -2303,11 +2246,11 @@
   <link rel="stylesheet" href="https://unpkg.com/lenis@1.2.3/dist/lenis.css">
   <script src="https://unpkg.com/lenis@1.2.3/dist/lenis.min.js"></script>
   <!--  GSAP CDNs  -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js"></script>
-  <script type="module" src="https://acuatica.netlify.app/js/funtions/lenis.js"></script>
-  <script type="module" src="http://127.0.0.1:5500/js/index.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/TextPlugin.min.js"></script>
+  <script src="https://acuatica.netlify.app/js/funtions/lenis.js"></script>
+  <script src="https://acuatica.netlify.app/js/funtions/loading_page.j"></script>
+  <script type="module" src="http://127.0.0.1:5500/js/index.js">
+  </script>
 </body>
-
-</html>
