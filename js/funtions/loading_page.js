@@ -26,6 +26,7 @@ const animationConfig = {
 let preloaderElements = {};
 let contentElements = {};
 let masterTimeline;
+let intersectionObserver;
 
 /**
  * Inyecta estilos críticos necesarios para que el loader y las imágenes hero
@@ -307,25 +308,7 @@ function addPreloaderTransition() {
 function addContentRevealAnimations() {
     const revealStart = 4.5; // Inicia 0.5s después de que comience la salida del preloader
 
-    // Revelado de imágenes con efecto stagger
-    if (contentElements.heroImages.length > 0) {
-        masterTimeline.to(contentElements.heroImages, {
-            clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
-            duration: animationConfig.reveal.images.duration,
-            stagger: animationConfig.reveal.images.stagger,
-            ease: "power1.out" // Cambio a ease más suave
-        }, revealStart);
-    }
-
-    // Efecto de zoom dramático
-    if (contentElements.heroContainer) {
-        masterTimeline.to(contentElements.heroContainer, {
-            scale: animationConfig.reveal.zoom.scale,
-            duration: animationConfig.reveal.zoom.duration,
-            ease: "power1.out"
-        }, revealStart + 0.5);
-    }
-
+    // Solo animaciones iniciales (navegación y título)
     // Animación de la navegación
     if (contentElements.navigation) {
         masterTimeline.to(contentElements.navigation, {
@@ -346,32 +329,10 @@ function addContentRevealAnimations() {
         }, revealStart + 1.2);
     }
 
-    // Calcular cuándo termina la secuencia de imágenes
-    const imagesCount = contentElements.heroImages.length;
-    const lastImageStart = revealStart + (imagesCount - 1) * animationConfig.reveal.images.stagger;
-    const lastImageEnd = lastImageStart + animationConfig.reveal.images.duration;
-    const heroExitStart = lastImageEnd + animationConfig.reveal.heroExit.delay;
-
-    // Salida de las imágenes hero hacia arriba
-    if (contentElements.loaderImagesWrapper) {
-        masterTimeline.to(contentElements.loaderImagesWrapper, {
-            yPercent: -100,
-            duration: animationConfig.reveal.heroExit.duration,
-            ease: "power2.inOut"
-        }, heroExitStart);
-    }
-
-    // Ocultar completamente el loader-wrapper después de que salgan las imágenes hero
-    if (preloaderElements.wrapper) {
-        masterTimeline.to(preloaderElements.wrapper, {
-            autoAlpha: 0, // opacity: 0 + visibility: hidden
-            duration: 0.1,
-            onComplete: function () {
-                // Forzar ocultación completa con display none
-                preloaderElements.wrapper.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important;';
-            }
-        }, heroExitStart + animationConfig.reveal.heroExit.duration);
-    }
+    // Configurar observer para las imágenes hero después de que termine el preloader
+    masterTimeline.call(() => {
+        setupIntersectionObserver();
+    }, null, revealStart + 2);
 }
 
 /**
