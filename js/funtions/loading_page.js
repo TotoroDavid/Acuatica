@@ -209,7 +209,7 @@ function setInitialStates() {
     // Estados iniciales de las imágenes hero
     if (contentElements.heroImages.length > 0) {
         gsap.set(contentElements.heroImages, {
-            clipPath: "polygon(0 0, 100% 0, 100% 10%, 0 10%)"
+            clipPath: "polygon(0 0, 100% 0, 100% 0%, 0 0%)" // 🔧 CONTROL DE REVELADO: 0% = oculta completamente | 100% = visible completa
         });
     }
 
