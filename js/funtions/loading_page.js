@@ -145,6 +145,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // Configurar estados iniciales
     setInitialStates();
 
+    // Bloquear scroll durante la animación
+    disableScroll();
+
     // Crear y ejecutar timeline principal
     createMasterTimeline();
 });
@@ -422,13 +425,52 @@ function cleanupAnimation() {
 }
 
 /**
+ * Bloquea el scroll durante la animación
+ */
+function disableScroll() {
+    // Guardar la posición actual del scroll
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
+    // Aplicar estilos CSS para bloquear scroll
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollTop}px`;
+    document.body.style.left = `-${scrollLeft}px`;
+    document.body.style.width = '100%';
+    document.body.style.height = '100%';
+
+    // Función que previene el scroll
+    window.preventDefault = function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    };
+
+    // Bloquear diferentes tipos de scroll
+    window.addEventListener('scroll', window.preventDefault, { passive: false });
+    window.addEventListener('wheel', window.preventDefault, { passive: false });
+    window.addEventListener('touchmove', window.preventDefault, { passive: false });
+    window.addEventListener('keydown', function (e) {
+        // Bloquear teclas de navegación (flechas, space, page up/down)
+        if ([32, 33, 34, 35, 36, 37, 38, 39, 40].includes(e.keyCode)) {
+            e.preventDefault();
+        }
+    });
+
+    console.log('🚫 Scroll bloqueado durante animación');
+}
+
+/**
  * Desbloquea el scroll después de la animación
  */
 function enableScroll() {
     // Remover todos los event listeners
-    window.removeEventListener('scroll', preventDefault);
-    window.removeEventListener('wheel', preventDefault);
-    window.removeEventListener('touchmove', preventDefault);
+    if (window.preventDefault) {
+        window.removeEventListener('scroll', window.preventDefault);
+        window.removeEventListener('wheel', window.preventDefault);
+        window.removeEventListener('touchmove', window.preventDefault);
+    }
 
     // Restaurar estilos CSS
     document.body.style.overflow = '';
@@ -436,6 +478,7 @@ function enableScroll() {
     document.body.style.top = '';
     document.body.style.left = '';
     document.body.style.width = '';
+    document.body.style.height = '';
 
     // 🎯 FORZAR POSICIÓN AL INICIO: Siempre volver al top después de la animación
     window.scrollTo({
@@ -443,6 +486,9 @@ function enableScroll() {
         left: 0,
         behavior: 'instant' // Sin animación suave para que sea inmediato
     });
+
+    // Limpiar la función preventDefault
+    window.preventDefault = null;
 
     console.log('✅ Scroll habilitado - posición restaurada al inicio');
 }
