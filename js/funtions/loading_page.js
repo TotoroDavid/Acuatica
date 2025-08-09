@@ -19,8 +19,8 @@ const animationConfig = {
     reveal: {
         // 🖼️ IMÁGENES HERO: Control principal de velocidad de aparición
         images: {
-            stagger: 0.7,   // ⏰ TIEMPO ENTRE IMÁGENES: ↑ Aumentar = más pausa entre cada imagen | ↓ Disminuir = imágenes más seguidas
-            duration: 2.0   // ⏳ VELOCIDAD DE APARICIÓN: ↑ Aumentar = cada imagen aparece más lento | ↓ Disminuir = aparición más rápida
+            stagger: 0.5,   // ⏰ TIEMPO ENTRE IMÁGENES: ↓ Reducido de 0.7 a 0.5 para más velocidad
+            duration: 1.5   // ⏳ VELOCIDAD DE APARICIÓN: ↓ Reducido de 2.0 a 1.5 para más agilidad
         },
 
         // 🔍 ZOOM: Efecto de acercamiento en las imágenes
@@ -43,8 +43,8 @@ const animationConfig = {
 
         // 🚪 SALIDA HERO: Cuándo y cómo salen las imágenes hero
         heroExit: {
-            duration: 1,  // ⏳ VELOCIDAD DE SALIDA: ↑ Aumentar = salida más lenta | ↓ Disminuir = salida más rápida
-            delay: 1        // ⏰ PAUSA ANTES DE SALIR: ↑ Aumentar = más tiempo viendo las imágenes | ↓ Disminuir = salen más pronto
+            duration: 0.8,  // ⏳ VELOCIDAD DE SALIDA: ↓ Reducido de 1 a 0.8 para salida más rápida
+            delay: 0.3      // ⏰ PAUSA ANTES DE SALIR: ↓ Reducido de 1 a 0.3 para menos espera
         }
     }
 };
