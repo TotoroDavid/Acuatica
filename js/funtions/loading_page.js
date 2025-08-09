@@ -46,51 +46,111 @@
             // MEJORA: Marcar como completado para evitar múltiples ejecuciones
             window.loaderCompleted = true;
 
+            // Intentar trigger de Webflow primero
             if (typeof $ !== 'undefined') {
-                $(".loader5_ix-trigger").click();
+                const $trigger = $(".loader5_ix-trigger");
+                if ($trigger.length > 0) {
+                    $trigger.click();
+
+                    // MEJORA: Verificar si el trigger funcionó después de 1 segundo
+                    setTimeout(() => {
+                        const $wrapper = $(".loader-wrapper");
+                        if ($wrapper.length > 0 && $wrapper.is(':visible')) {
+                            console.warn('🚨 Webflow trigger failed, using manual fallback');
+                            hideLoaderProperly();
+                        }
+                    }, 1000);
+                } else {
+                    // No hay trigger, usar fallback inmediatamente
+                    hideLoaderProperly();
+                }
+            } else {
+                // No hay jQuery, usar fallback
+                hideLoaderProperly();
             }
         } catch (e) {
-            // Fallback: hide loader manually con transición correcta
+            console.error('Error in endLoaderAnimation:', e);
             hideLoaderProperly();
         }
     }
 
     // MEJORA: Función específica para ocultar el loader correctamente
     function hideLoaderProperly() {
+        console.log('🔧 Manually hiding loader...');
+
         try {
             if (typeof $ !== 'undefined') {
-                const $loader = $(".loader-wrapper");
-                if ($loader.length > 0) {
-                    // Paso 1: Opacity 0 (mantiene el espacio pero permite clics)
-                    $loader.css({
-                        'opacity': '0',
-                        'pointer-events': 'none', // CLAVE: Permite clics a través del loader
-                        'transition': 'opacity 0.5s ease'
+                const $wrapper = $(".loader-wrapper");
+                const $component = $(".loader5_component");
+
+                if ($wrapper.length > 0) {
+                    console.log('📍 Found loader-wrapper, hiding...');
+
+                    // PASO 1: Inmediatamente permitir clics
+                    $wrapper.css({
+                        'pointer-events': 'none',
+                        'z-index': '-1' // Enviar atrás para evitar bloqueos
                     });
 
-                    // Paso 2: Display none después de la transición
+                    // PASO 2: Animar salida
+                    $wrapper.css({
+                        'transition': 'opacity 0.5s ease, transform 0.5s ease',
+                        'opacity': '0',
+                        'transform': 'translateY(-100%)'
+                    });
+
+                    // PASO 3: Ocultar componente interno si existe
+                    if ($component.length > 0) {
+                        $component.css({
+                            'display': 'none',
+                            'opacity': '0'
+                        });
+                    }
+
+                    // PASO 4: Remover completamente después de la animación
                     setTimeout(() => {
-                        $loader.css('display', 'none').remove();
-                        console.log('✅ Loader hidden and removed');
+                        $wrapper.css('display', 'none');
+                        setTimeout(() => {
+                            $wrapper.remove();
+                            console.log('✅ Loader completely removed');
+                        }, 100);
                     }, 500);
                 }
             }
         } catch (e) {
-            // Last resort: use vanilla JS
-            const loader = document.querySelector('.loader-wrapper');
-            if (loader) {
-                // Paso 1: Opacity 0 + pointer-events none
-                loader.style.transition = 'opacity 0.5s ease';
-                loader.style.opacity = '0';
-                loader.style.pointerEvents = 'none'; // CLAVE: Permite clics inmediatamente
+            console.error('jQuery fallback failed:', e);
 
-                // Paso 2: Display none después de la transición
+            // Last resort: use vanilla JS
+            const wrapper = document.querySelector('.loader-wrapper');
+            const component = document.querySelector('.loader5_component');
+
+            if (wrapper) {
+                console.log('📍 Using vanilla JS fallback...');
+
+                // PASO 1: Inmediatamente permitir clics
+                wrapper.style.pointerEvents = 'none';
+                wrapper.style.zIndex = '-1';
+
+                // PASO 2: Animar salida
+                wrapper.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                wrapper.style.opacity = '0';
+                wrapper.style.transform = 'translateY(-100%)';
+
+                // PASO 3: Ocultar componente interno
+                if (component) {
+                    component.style.display = 'none';
+                    component.style.opacity = '0';
+                }
+
+                // PASO 4: Remover completamente
                 setTimeout(() => {
-                    loader.style.display = 'none';
-                    if (loader.parentNode) {
-                        loader.parentNode.removeChild(loader);
-                    }
-                    console.log('✅ Loader hidden and removed (vanilla JS)');
+                    wrapper.style.display = 'none';
+                    setTimeout(() => {
+                        if (wrapper.parentNode) {
+                            wrapper.parentNode.removeChild(wrapper);
+                            console.log('✅ Loader completely removed (vanilla JS)');
+                        }
+                    }, 100);
                 }, 500);
             }
         }
@@ -208,12 +268,35 @@
         }
     }
 
+    // MEJORA: Verificación inmediata de loader atascado
+    function checkForStuckLoader() {
+        setTimeout(() => {
+            const wrapper = document.querySelector('.loader-wrapper');
+            const component = document.querySelector('.loader5_component');
+
+            // Si el wrapper está visible pero el componente está oculto = loader atascado
+            if (wrapper && component) {
+                const wrapperVisible = window.getComputedStyle(wrapper).display !== 'none';
+                const componentVisible = window.getComputedStyle(component).display !== 'none';
+
+                if (wrapperVisible && !componentVisible) {
+                    console.warn('🚨 Detected stuck loader on page load!');
+                    hideLoaderProperly();
+                }
+            }
+        }, 500);
+    }
+
     // MEJORA: Una sola estrategia de inicialización basada en el estado del DOM
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', startLoaderSafely);
+        document.addEventListener('DOMContentLoaded', () => {
+            startLoaderSafely();
+            checkForStuckLoader();
+        });
     } else {
         // DOM ya está listo
         startLoaderSafely();
+        checkForStuckLoader();
     }
 
 })();
@@ -237,27 +320,23 @@
     window.addEventListener('load', () => {
         setTimeout(cleanupStuckLoader, 1000);
 
-        // MEJORA: Auto-hide del loader si se queda pegado después de 15 segundos
-        setTimeout(() => {
-            if (!window.loaderCompleted) {
-                console.warn('🚨 Loader timeout - forcing hide');
-                const loader = document.querySelector('.loader-wrapper');
-                if (loader && loader.style.display !== 'none') {
-                    // Usar la misma función para consistencia
-                    loader.style.transition = 'opacity 0.5s ease';
-                    loader.style.opacity = '0';
-                    loader.style.pointerEvents = 'none'; // CLAVE: Permite clics inmediatamente
+        // MEJORA: Auto-hide del loader si se queda pegado (múltiples verificaciones)
+        const timeouts = [3000, 8000, 15000]; // 3s, 8s, 15s
 
-                    setTimeout(() => {
-                        loader.style.display = 'none';
-                        if (loader.parentNode) {
-                            loader.parentNode.removeChild(loader);
-                        }
-                        console.log('✅ Loader timeout - hidden and removed');
-                    }, 500);
+        timeouts.forEach((delay, index) => {
+            setTimeout(() => {
+                const wrapper = document.querySelector('.loader-wrapper');
+                if (wrapper) {
+                    const isVisible = window.getComputedStyle(wrapper).display !== 'none';
+                    const hasOpacity = parseFloat(window.getComputedStyle(wrapper).opacity) > 0;
+
+                    if (isVisible && hasOpacity) {
+                        console.warn(`🚨 Loader timeout ${index + 1} - forcing hide after ${delay}ms`);
+                        hideLoaderProperly();
+                    }
                 }
-            }
-        }, 15000);
+            }, delay);
+        });
     });
 })();
 
