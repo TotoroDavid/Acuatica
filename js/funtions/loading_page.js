@@ -245,6 +245,7 @@ function createMasterTimeline() {
             console.log('Animación completa');
             // Cleanup opcional
             cleanupAnimation();
+            enableScroll(); // Habilitar scroll después de la animación
         }
     });
 
@@ -418,6 +419,32 @@ function cleanupAnimation() {
             element.style.willChange = 'auto';
         }
     });
+}
+
+/**
+ * Desbloquea el scroll después de la animación
+ */
+function enableScroll() {
+    // Remover todos los event listeners
+    window.removeEventListener('scroll', preventDefault);
+    window.removeEventListener('wheel', preventDefault);
+    window.removeEventListener('touchmove', preventDefault);
+
+    // Restaurar estilos CSS
+    document.body.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.width = '';
+
+    // 🎯 FORZAR POSICIÓN AL INICIO: Siempre volver al top después de la animación
+    window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'instant' // Sin animación suave para que sea inmediato
+    });
+
+    console.log('✅ Scroll habilitado - posición restaurada al inicio');
 }
 
 /**
