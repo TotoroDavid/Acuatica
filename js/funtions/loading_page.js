@@ -7,18 +7,45 @@
 // Configuración de animación
 const animationConfig = {
     preloader: {
-        counter: { duration: 2, ease: "power2.out" },
+        // ⏱️ CONTADOR: Tiempo que tarda en contar de 0 a 100
+        counter: { duration: 2, ease: "power2.out" }, // ↑ Aumentar = contador más lento | ↓ Disminuir = contador más rápido
+
+        // 📊 BARRA DE PROGRESO: Animación en 2 fases
         progressBar: {
-            phase1: { width: "30%", duration: 1 },
-            phase2: { width: "100%", duration: 1.5 }
+            phase1: { width: "30%", duration: 1 },    // ↑ Aumentar duration = fase 1 más lenta
+            phase2: { width: "100%", duration: 1.5 }  // ↑ Aumentar duration = fase 2 más lenta
         }
     },
     reveal: {
-        images: { stagger: 0.7, duration: 2.0 },
-        zoom: { scale: 1, duration: 3 },
-        navigation: { y: 0, duration: 1.2 },
-        title: { stagger: 0.1, duration: 0.8 },
-        heroExit: { duration: 1.5, delay: 2 } // Configuración para salida de hero
+        // 🖼️ IMÁGENES HERO: Control principal de velocidad de aparición
+        images: {
+            stagger: 0.7,   // ⏰ TIEMPO ENTRE IMÁGENES: ↑ Aumentar = más pausa entre cada imagen | ↓ Disminuir = imágenes más seguidas
+            duration: 2.0   // ⏳ VELOCIDAD DE APARICIÓN: ↑ Aumentar = cada imagen aparece más lento | ↓ Disminuir = aparición más rápida
+        },
+
+        // 🔍 ZOOM: Efecto de acercamiento en las imágenes
+        zoom: {
+            scale: 1,       // 📏 NIVEL DE ZOOM: 1 = sin zoom | 1.2 = zoom ligero | 1.5 = zoom fuerte
+            duration: 3     // ⏳ VELOCIDAD DE ZOOM: ↑ Aumentar = zoom más lento y suave | ↓ Disminuir = zoom más rápido
+        },
+
+        // 🧭 NAVEGACIÓN: Aparición del menú/navegación
+        navigation: {
+            y: 0,           // 📍 POSICIÓN FINAL: 0 = posición normal | -50 = viene desde arriba | 50 = viene desde abajo
+            duration: 1.2   // ⏳ VELOCIDAD: ↑ Aumentar = navegación aparece más lento | ↓ Disminuir = aparición más rápida
+        },
+
+        // 📝 TÍTULO: Animación letra por letra
+        title: {
+            stagger: 0.1,   // ⏰ TIEMPO ENTRE LETRAS: ↑ Aumentar = más pausa entre letras | ↓ Disminuir = letras más seguidas
+            duration: 0.8   // ⏳ VELOCIDAD DE CADA LETRA: ↑ Aumentar = cada letra aparece más lento | ↓ Disminuir = más rápido
+        },
+
+        // 🚪 SALIDA HERO: Cuándo y cómo salen las imágenes hero
+        heroExit: {
+            duration: 1,  // ⏳ VELOCIDAD DE SALIDA: ↑ Aumentar = salida más lenta | ↓ Disminuir = salida más rápida
+            delay: 1        // ⏰ PAUSA ANTES DE SALIR: ↑ Aumentar = más tiempo viendo las imágenes | ↓ Disminuir = salen más pronto
+        }
     }
 };
 
