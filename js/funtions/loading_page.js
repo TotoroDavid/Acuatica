@@ -1,687 +1,411 @@
 /**
- * Acuatica Landing Page Reveal Animation con GSAP
- * Animación de preloader con contador y revelado secuencial de 7 imágenes hero
- * Basado en arquitectura de capas superpuestas con clip-path
+ * GSAP Landing Page Reveal Animation
+ * Implementa un preloader interactivo seguido de revelado de contenido
+ * Arquitectura: Preloader → Transición → Revelado de Contenido
  */
 
-// ===== CONFIGURACIÓN DE ANIMACIÓN =====
+// Configuración de animación
 const animationConfig = {
     preloader: {
-        duration: 8, // 8s primera visita, 2s recurrente
-        counter: {
-            totalDuration: 7.5,
-            ease: "power2.out"
-        },
+        counter: { duration: 2, ease: "power2.out" },
         progressBar: {
-            phase1: { width: "30%", duration: 2, start: 0.5 },
-            phase2: { width: "100%", duration: 4.5, start: 2.5 },
-            fadeOut: { duration: 0.3, start: 7.2 }
-        },
-        exit: { duration: 1, start: 8, ease: "power2.inOut" }
+            phase1: { width: "30%", duration: 1 },
+            phase2: { width: "100%", duration: 1.5 }
+        }
     },
     reveal: {
-        images: {
-            displayTime: 1.0, // Tiempo que cada imagen permanece visible
-            transitionTime: 0.5, // Tiempo de transición entre imágenes
-            start: 9,
-            effects: {
-                zoomIn: 1.08, // Zoom de entrada
-                zoomHover: 1.03, // Zoom durante display
-                zoomOut: 1.12 // Zoom de salida
-            }
-        },
-        navigation: {
-            duration: 0.8,
-            start: 16, // Después de que terminen todas las imágenes
-            ease: "power2.out"
-        }
+        images: { stagger: 0.3, duration: 1.5 },
+        zoom: { scale: 1.2, duration: 4 },
+        navigation: { y: 0, duration: 1.2 },
+        title: { stagger: 0.1, duration: 0.8 },
+        heroExit: { duration: 1.5, delay: 2 } // Configuración para salida de hero
     }
 };
 
-// ===== VARIABLES GLOBALES =====
+// Variables globales para elementos DOM
+let preloaderElements = {};
+let contentElements = {};
 let masterTimeline;
-let preloader, progressBar, heroImages, navbar, loaderNumber;
-let isFirstVisit = true;
-let loaderDuration = 8;
-
-// ===== INICIALIZACIÓN =====
-(function () {
-    'use strict';
-
-    // Control de ejecución única
-    if (window.acuaticaLoaderInitialized) {
-        console.log('⚠️ Acuatica loader already initialized, skipping...');
-        return;
-    }
-
-    window.acuaticaLoaderInitialized = true;
-    console.log('🚀 Initializing Acuatica loader...');
-
-    // Verificar si es primera visita
-    try {
-        if (sessionStorage.getItem("acuatica_visited") !== null) {
-            isFirstVisit = false;
-            loaderDuration = 2;
-            // Ajustar configuración para visitantes recurrentes
-            animationConfig.preloader.duration = 2;
-            animationConfig.preloader.counter.totalDuration = 1.5;
-            animationConfig.preloader.progressBar.phase1.duration = 0.5;
-            animationConfig.preloader.progressBar.phase2.duration = 0.8;
-            animationConfig.preloader.exit.start = 2;
-            animationConfig.reveal.start = 3;
-            animationConfig.reveal.navigation.start = 8;
-        }
-        sessionStorage.setItem("acuatica_visited", "true");
-    } catch (e) {
-        console.warn('SessionStorage not available:', e);
-    }
-
-    // Inicializar cuando el DOM esté listo
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initializeAnimation);
-    } else {
-        initializeAnimation();
-    }
-})();
 
 /**
- * Inicializar elementos DOM y crear animación principal
- */
-function initializeAnimation() {
-    try {
-        // Verificar que GSAP esté cargado
-        if (typeof gsap === 'undefined') {
-            console.error('GSAP no está cargado. Usando fallback...');
-            fallbackAnimation();
-            return;
-        }
-
-        // Inicializar elementos DOM
-        initializeElements();
-
-        // Inyectar estilos críticos
-        injectCriticalStyles();
-
-        // Preparar elementos para animación
-        prepareElements();
-
-        // Crear y ejecutar timeline principal
-        createMasterTimeline();
-
-        console.log(`🎬 Acuatica animation initialized (${isFirstVisit ? 'first visit' : 'returning visitor'})`);
-        console.log(`📸 Found ${heroImages.length} hero images for reveal sequence`);
-
-    } catch (error) {
-        console.error('Animation initialization error:', error);
-        fallbackAnimation();
-    }
-}
-
-/**
- * Inicializar referencias a elementos DOM
- */
-function initializeElements() {
-    preloader = document.querySelector('.loader-wrapper');
-    progressBar = document.querySelector('.loader5_progress-bar');
-    heroImages = document.querySelectorAll('.hero-img');
-    navbar = document.querySelector('.navbar5_component');
-    loaderNumber = document.querySelector('.loader5_number');
-
-    // Verificar elementos críticos
-    if (!preloader) {
-        throw new Error('Loader wrapper not found');
-    }
-
-    if (heroImages.length === 0) {
-        console.warn('⚠️ No hero images found! Expected 7 images with classes .hero-img.z-index-1 through .hero-img.z-index-7');
-    }
-
-    // Log de elementos encontrados para debugging
-    console.log('🔍 DOM Elements found:');
-    console.log('- Preloader:', !!preloader);
-    console.log('- Progress bar:', !!progressBar);
-    console.log('- Hero images:', heroImages.length);
-    console.log('- Navbar:', !!navbar);
-    console.log('- Loader number:', !!loaderNumber);
-
-    // Log específico de imágenes hero
-    heroImages.forEach((img, index) => {
-        const zIndexClass = Array.from(img.classList).find(cls => cls.startsWith('z-index-'));
-        console.log(`  Hero image ${index + 1}: ${zIndexClass || 'no z-index class'}`);
-    });
-}
-
-/**
- * Inyectar estilos CSS críticos para las animaciones
+ * Inyecta estilos críticos necesarios para que el loader y las imágenes hero
+ * tengan el estado/altura correctos sin modificar archivos CSS/HTML.
  */
 function injectCriticalStyles() {
-    if (document.getElementById('acuatica-reveal-styles')) {
-        return;
-    }
-
-    const styles = `
-        <style id="acuatica-reveal-styles">
-            /* Optimizaciones para animaciones suaves */
-            .loader-wrapper {
-                position: fixed;
-                inset: 0%;
-                z-index: 100;
-                display: block;
-                min-height: 100vh;
-                will-change: clip-path, opacity;
-                background: #000;
-            }
-            
-            .loader_imgs {
-                position: relative;
-                z-index: 98;
-                overflow: hidden;
-            }
-            
-            .hero-imgs {
-                position: relative;
-                width: 100%;
-                height: 100vh;
-            }
-            
-            .hero-img {
-                position: absolute;
-                inset: 0%;
-                width: 100%;
-                min-height: 100vh;
-                object-fit: cover;
-                will-change: clip-path, transform, opacity;
-                backface-visibility: hidden;
-                transform-origin: center center;
-            }
-            
-            .navbar5_component {
-                will-change: transform, opacity;
-            }
-            
-            /* Z-index específicos para capas - CRÍTICO para la secuencia */
-            .hero-img.z-index-1 { z-index: 1; }
-            .hero-img.z-index-2 { z-index: 2; }
-            .hero-img.z-index-3 { z-index: 3; }
-            .hero-img.z-index-4 { z-index: 4; }
-            .hero-img.z-index-5 { z-index: 5; }
-            .hero-img.z-index-6 { z-index: 6; }
-            .hero-img.z-index-7 { z-index: 7; }
-        </style>
-    `;
-
-    document.head.insertAdjacentHTML('beforeend', styles);
-    console.log('🎨 Critical styles injected');
+    try {
+        if (document.getElementById('acuatica-critical-styles')) return;
+        const css = `
+            .loader-wrapper{position:fixed;inset:0;z-index:100;display:block!important;visibility:visible!important;opacity:1!important;background:#000}
+            .loader_imgs{position:relative;z-index:98;display:block;min-height:100vh;overflow:hidden}
+            .hero-imgs{position:relative;width:100%;height:100vh}
+            .hero-img{position:absolute;inset:0;width:100%;min-height:100vh;object-fit:cover;backface-visibility:hidden;transform-origin:center center}
+        `;
+        const styleTag = document.createElement('style');
+        styleTag.id = 'acuatica-critical-styles';
+        styleTag.textContent = css;
+        document.head.appendChild(styleTag);
+    } catch (_) { /* noop */ }
 }
 
 /**
- * Preparar elementos para animación
+ * Fuerza por JS el estado visible del loader al inicio (por si CSS lo oculta).
  */
-function prepareElements() {
-    // Mostrar preloader
-    gsap.set(preloader, {
-        display: "block",
-        visibility: "visible",
-        opacity: 1
-    });
+function ensureInitialLoaderState() {
+    const wrapper = document.querySelector('.loader-wrapper');
+    if (!wrapper) return;
+    if (typeof gsap !== 'undefined') {
+        gsap.set(wrapper, { display: 'block', visibility: 'visible', opacity: 1 });
+    } else {
+        wrapper.style.display = 'block';
+        wrapper.style.visibility = 'visible';
+        wrapper.style.opacity = '1';
+    }
+}
 
-    // Preparar imágenes hero - TODAS inicialmente ocultas con clip-path
-    if (heroImages.length > 0) {
-        gsap.set(heroImages, {
-            clipPath: 'polygon(0 100%, 100% 100%, 100% 100%, 0 100%)',
-            scale: animationConfig.reveal.images.effects.zoomIn,
-            opacity: 1,
-            transformOrigin: 'center center'
-        });
-
-        console.log(`🎯 Prepared ${heroImages.length} hero images with initial clip-path (hidden)`);
+/**
+ * Asegura tamaños/posición mínimos de contenedores hero cuando el CSS aún no cargó.
+ */
+function ensureHeroContainers() {
+    const loaderImgs = document.querySelector('.loader_imgs');
+    if (loaderImgs) {
+        loaderImgs.style.minHeight = '100vh';
+        loaderImgs.style.overflow = 'hidden';
+        loaderImgs.style.display = 'block';
+        loaderImgs.style.position = loaderImgs.style.position || 'relative';
+        loaderImgs.style.zIndex = loaderImgs.style.zIndex || '98';
     }
 
-    // Preparar navbar - inicialmente oculta
-    if (navbar) {
-        gsap.set(navbar, {
+    const heroImgsContainer = document.querySelector('.hero-imgs');
+    if (heroImgsContainer) {
+        heroImgsContainer.style.height = '100vh';
+        heroImgsContainer.style.width = '100%';
+        heroImgsContainer.style.position = heroImgsContainer.style.position || 'relative';
+    }
+
+    const heroImgs = document.querySelectorAll('.hero-img');
+    heroImgs.forEach((img) => {
+        img.style.position = 'absolute';
+        img.style.inset = '0';
+        img.style.width = '100%';
+        img.style.minHeight = '100vh';
+        img.style.objectFit = 'cover';
+        img.style.backfaceVisibility = 'hidden';
+        img.style.transformOrigin = 'center center';
+    });
+}
+
+/**
+ * Inicialización cuando el DOM está listo
+ */
+document.addEventListener('DOMContentLoaded', function () {
+    // Asegurar estado inicial correcto aún si GSAP no está listo
+    injectCriticalStyles();
+    ensureInitialLoaderState();
+    ensureHeroContainers();
+
+    // Verificar que GSAP esté cargado
+    if (typeof gsap === 'undefined') {
+        console.error('GSAP no está cargado. Asegúrate de incluir el CDN de GSAP.');
+        return;
+    }
+
+    // Inicializar elementos DOM
+    initializeDOMElements();
+
+    // Preparar texto del título para animación de letras
+    prepareTextAnimation();
+
+    // Configurar estados iniciales
+    setInitialStates();
+
+    // Crear y ejecutar timeline principal
+    createMasterTimeline();
+});
+
+/**
+ * Inicializa referencias a elementos DOM
+ */
+function initializeDOMElements() {
+    // Elementos del preloader
+    preloaderElements = {
+        wrapper: document.querySelector('.loader-wrapper'), // Contenedor principal del loader
+        container: document.querySelector('.loader5_component'),
+        digits: document.querySelectorAll('.loader5_number'),
+        progressBar: document.querySelector('.loader5_progress-bar'),
+        progressContainer: document.querySelector('.loader5_progress')
+    };
+
+    // Elementos del contenido principal
+    contentElements = {
+        heroImages: document.querySelectorAll('.hero-img'),
+        heroContainer: document.querySelector('.hero-imgs'),
+        loaderImagesWrapper: document.querySelector('.loader_imgs'),
+        navigation: document.querySelector('.navbar5_component'),
+        titleContainer: document.querySelector('.header103_content-wrapper h2'),
+        mainWrapper: document.querySelector('.main-wrapper')
+    };
+
+    console.log('Elementos DOM inicializados:', { preloaderElements, contentElements });
+}
+
+/**
+ * Prepara el texto del título para animación letra por letra
+ */
+function prepareTextAnimation() {
+    const titleElement = contentElements.titleContainer;
+    if (!titleElement) return;
+
+    const text = titleElement.textContent;
+    titleElement.innerHTML = '';
+
+    // Crear span para cada letra
+    text.split('').forEach(char => {
+        const span = document.createElement('span');
+        span.textContent = char === ' ' ? '\u00A0' : char; // Preservar espacios
+        span.style.display = 'inline-block';
+        titleElement.appendChild(span);
+    });
+
+    // Actualizar referencia a los spans creados
+    contentElements.titleSpans = titleElement.querySelectorAll('span');
+}
+
+/**
+ * Configura estados iniciales para todas las animaciones
+ */
+function setInitialStates() {
+    // Estados iniciales del preloader
+    if (preloaderElements.progressBar) {
+        gsap.set(preloaderElements.progressBar, { width: "0%" });
+    }
+
+    // Estados iniciales de las imágenes hero
+    if (contentElements.heroImages.length > 0) {
+        gsap.set(contentElements.heroImages, {
+            clipPath: "polygon(0 0, 100% 0, 100% 10%, 0 10%)"
+        });
+    }
+
+    // Estado inicial del contenedor hero
+    if (contentElements.heroContainer) {
+        gsap.set(contentElements.heroContainer, { scale: 1 });
+    }
+
+
+
+    // Estado inicial de la navegación
+    if (contentElements.navigation) {
+        gsap.set(contentElements.navigation, { y: -150 });
+    }
+
+    // Estados iniciales de las letras del título
+    if (contentElements.titleSpans && contentElements.titleSpans.length > 0) {
+        gsap.set(contentElements.titleSpans, {
             y: -100,
             opacity: 0
         });
     }
 
-    console.log('✅ All elements prepared for animation');
+    console.log('Estados iniciales configurados');
 }
 
 /**
- * Crear timeline principal con todas las animaciones
+ * Crea el timeline principal que coordina todas las animaciones
  */
 function createMasterTimeline() {
-    // Crear timeline principal
     masterTimeline = gsap.timeline({
         onComplete: () => {
-            console.log('✨ Master animation sequence completed');
+            console.log('Animación completa');
+            // Cleanup opcional
             cleanupAnimation();
         }
     });
 
-    // Guardar referencia global para debugging
-    window.acuaticaMasterTimeline = masterTimeline;
-
     // Fase 1: Animaciones del preloader
-    animatePreloader();
+    addPreloaderAnimations();
 
-    // Fase 2: Ocultar preloader
-    hidePreloader();
+    // Fase 2: Transición de salida del preloader
+    addPreloaderTransition();
 
-    // Fase 3: Revelar contenido hero (LO MÁS IMPORTANTE)
-    revealHeroContent();
+    // Fase 3: Revelado del contenido
+    addContentRevealAnimations();
 
-    // Fase 4: Animar navegación
-    animateNavigation();
-
-    console.log(`⏱️ Total timeline duration: ${masterTimeline.duration().toFixed(2)}s`);
+    console.log('Timeline principal creado y ejecutándose');
 }
 
 /**
- * Animaciones del preloader (contador y barra de progreso)
+ * Añade animaciones del preloader al timeline
  */
-function animatePreloader() {
-    const config = animationConfig.preloader;
+function addPreloaderAnimations() {
+    // Animación del contador (simulando odómetro)
+    const counterAnimation = createCounterAnimation();
+    if (counterAnimation) {
+        masterTimeline.add(counterAnimation, 0);
+    }
 
-    // Animar contador de 0 a 100
-    const counterObj = { value: isFirstVisit ? 0 : 75 };
-
-    masterTimeline.to(counterObj, {
-        value: 100,
-        duration: config.counter.totalDuration,
-        ease: config.counter.ease,
-        onUpdate: function () {
-            if (loaderNumber) {
-                loaderNumber.textContent = Math.round(counterObj.value);
-            }
-        }
-    }, 0.5);
-
-    // Animar barra de progreso en dos fases
-    if (progressBar) {
+    // Animación de la barra de progreso en dos fases
+    if (preloaderElements.progressBar) {
         // Fase 1: 0% → 30%
-        masterTimeline.to(progressBar, {
-            width: config.progressBar.phase1.width,
-            duration: config.progressBar.phase1.duration,
+        masterTimeline.to(preloaderElements.progressBar, {
+            width: animationConfig.preloader.progressBar.phase1.width,
+            duration: animationConfig.preloader.progressBar.phase1.duration,
             ease: "power2.out"
-        }, config.progressBar.phase1.start);
+        }, 0.5);
 
         // Fase 2: 30% → 100%
-        masterTimeline.to(progressBar, {
-            width: config.progressBar.phase2.width,
-            duration: config.progressBar.phase2.duration,
-            ease: "power2.inOut"
-        }, config.progressBar.phase2.start);
-
-        // Fade out de la barra
-        masterTimeline.to(progressBar, {
-            opacity: 0,
-            duration: config.progressBar.fadeOut.duration,
+        masterTimeline.to(preloaderElements.progressBar, {
+            width: animationConfig.preloader.progressBar.phase2.width,
+            duration: animationConfig.preloader.progressBar.phase2.duration,
             ease: "power2.out"
-        }, config.progressBar.fadeOut.start);
+        }, 1.5);
+
+        // Desvanecimiento de la barra
+        masterTimeline.to(preloaderElements.progressBar, {
+            autoAlpha: 0,
+            duration: 0.3
+        }, 3.5);
     }
 }
 
 /**
- * Ocultar preloader con deslizamiento hacia arriba
+ * Crea la animación del contador numérico
  */
-function hidePreloader() {
-    const config = animationConfig.preloader;
+function createCounterAnimation() {
+    if (!preloaderElements.digits.length) return null;
 
-    // Ocultar componente del loader primero
-    masterTimeline.to('.loader5_component', {
-        opacity: 0,
-        scale: 0.8,
-        y: -30,
-        duration: 0.6,
-        ease: 'power2.inOut'
-    }, config.exit.start - 0.5);
+    const counter = { value: 0 };
 
-    // Deslizar preloader hacia arriba con clip-path
-    masterTimeline.to(preloader, {
-        clipPath: 'polygon(0 0%, 100% 0%, 100% 0%, 0 0%)',
-        duration: config.exit.duration,
-        ease: config.exit.ease
-    }, config.exit.start);
-}
-
-/**
- * FUNCIÓN CLAVE: Revelar contenido hero con animación de imágenes secuencial
- */
-function revealHeroContent() {
-    const config = animationConfig.reveal;
-
-    if (heroImages.length === 0) {
-        console.error('❌ No hero images found for reveal animation!');
-        return;
-    }
-
-    console.log(`🎬 Starting hero reveal sequence with ${heroImages.length} images at ${config.images.start}s`);
-
-    // Configurar timing para secuencia de imágenes
-    const imageDisplayTime = config.images.displayTime;
-    const transitionTime = config.images.transitionTime;
-    let currentTime = config.images.start;
-
-    // Ordenar imágenes por z-index para secuencia correcta
-    const sortedImages = Array.from(heroImages).sort((a, b) => {
-        const aIndex = parseInt(a.className.match(/z-index-(\d+)/)?.[1] || '0');
-        const bIndex = parseInt(b.className.match(/z-index-(\d+)/)?.[1] || '0');
-        return aIndex - bIndex;
-    });
-
-    console.log('📋 Image sequence order:');
-    sortedImages.forEach((img, index) => {
-        const zIndexClass = img.className.match(/z-index-(\d+)/)?.[1] || 'unknown';
-        console.log(`  ${index + 1}. z-index-${zIndexClass}`);
-    });
-
-    // Animar cada imagen secuencialmente
-    sortedImages.forEach((img, index) => {
-        const isLastImage = index === sortedImages.length - 1;
-        const zIndexClass = img.className.match(/z-index-(\d+)/)?.[1] || index + 1;
-
-        console.log(`🎭 Animating image ${index + 1} (z-index-${zIndexClass}) at ${currentTime}s`);
-
-        // === ENTRADA DE LA IMAGEN ===
-
-        // 1. Revelar con clip-path desde abajo
-        masterTimeline.to(img, {
-            clipPath: 'polygon(0 0%, 100% 0%, 100% 100%, 0 100%)',
-            duration: transitionTime,
-            ease: 'power2.out'
-        }, currentTime);
-
-        // 2. Zoom de entrada dramático
-        masterTimeline.to(img, {
-            scale: config.images.effects.zoomHover,
-            duration: transitionTime * 1.2,
-            ease: 'back.out(1.4)'
-        }, currentTime + 0.1);
-
-        // === MOMENTO DE DISPLAY ===
-
-        // 3. Estabilización suave
-        masterTimeline.to(img, {
-            scale: 1.02,
-            duration: 0.3,
-            ease: 'power2.out'
-        }, currentTime + transitionTime);
-
-        // 4. Efecto de "respiración" sutil
-        masterTimeline.to(img, {
-            scale: config.images.effects.zoomHover,
-            duration: 0.2,
-            ease: 'sine.inOut',
-            yoyo: true,
-            repeat: 1
-        }, currentTime + transitionTime + 0.2);
-
-        // === SALIDA DE LA IMAGEN (excepto la última) ===
-
-        if (!isLastImage) {
-            // 5. Zoom out antes de ocultar
-            masterTimeline.to(img, {
-                scale: config.images.effects.zoomOut,
-                duration: 0.2,
-                ease: 'power2.in'
-            }, currentTime + imageDisplayTime - 0.2);
-
-            // 6. Ocultar con clip-path hacia arriba
-            masterTimeline.to(img, {
-                clipPath: 'polygon(0 0%, 100% 0%, 100% 0%, 0 0%)',
-                duration: transitionTime * 0.8,
-                ease: 'power2.in'
-            }, currentTime + imageDisplayTime - 0.1);
-        } else {
-            // === IMAGEN FINAL (permanece visible) ===
-
-            console.log(`🏆 Final image (z-index-${zIndexClass}) will remain visible`);
-
-            // Transición final suave a escala normal
-            masterTimeline.to(img, {
-                scale: 1,
-                duration: 0.6,
-                ease: 'power2.out'
-            }, currentTime + imageDisplayTime - 0.3);
-
-            // Establecer como imagen principal
-            masterTimeline.set(img, {
-                zIndex: 10
-            }, currentTime + imageDisplayTime);
+    return gsap.to(counter, {
+        value: 100,
+        duration: animationConfig.preloader.counter.duration,
+        ease: animationConfig.preloader.counter.ease,
+        onUpdate: function () {
+            const progress = Math.round(counter.value);
+            preloaderElements.digits.forEach(digit => {
+                if (digit) digit.textContent = progress;
+            });
         }
-
-        // Incrementar tiempo para la siguiente imagen con overlap suave
-        currentTime += imageDisplayTime - (transitionTime * 0.2);
     });
-
-    console.log(`✅ Hero reveal sequence configured, ending at ${currentTime.toFixed(2)}s`);
 }
 
 /**
- * Animar navegación con entrada desde arriba
+ * Añade la transición de salida del preloader
  */
-function animateNavigation() {
-    const config = animationConfig.reveal.navigation;
+function addPreloaderTransition() {
+    if (preloaderElements.container) {
+        masterTimeline.to(preloaderElements.container, {
+            yPercent: -100,
+            duration: 1,
+            ease: "power2.inOut"
+        }, 4); // Inicia a los 4 segundos
+    }
+}
 
-    if (navbar) {
-        masterTimeline.to(navbar, {
+/**
+ * Añade las animaciones de revelado del contenido
+ */
+function addContentRevealAnimations() {
+    const revealStart = 4.5; // Inicia 0.5s después de que comience la salida del preloader
+
+    // Revelado de imágenes con efecto stagger
+    if (contentElements.heroImages.length > 0) {
+        masterTimeline.to(contentElements.heroImages, {
+            clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
+            duration: animationConfig.reveal.images.duration,
+            stagger: animationConfig.reveal.images.stagger,
+            ease: "power1.out" // Cambio a ease más suave
+        }, revealStart);
+    }
+
+    // Efecto de zoom dramático
+    if (contentElements.heroContainer) {
+        masterTimeline.to(contentElements.heroContainer, {
+            scale: animationConfig.reveal.zoom.scale,
+            duration: animationConfig.reveal.zoom.duration,
+            ease: "power1.out"
+        }, revealStart + 0.5);
+    }
+
+    // Animación de la navegación
+    if (contentElements.navigation) {
+        masterTimeline.to(contentElements.navigation, {
+            y: animationConfig.reveal.navigation.y,
+            duration: animationConfig.reveal.navigation.duration,
+            ease: "power2.out"
+        }, revealStart + 1);
+    }
+
+    // Animación del título letra por letra
+    if (contentElements.titleSpans && contentElements.titleSpans.length > 0) {
+        masterTimeline.to(contentElements.titleSpans, {
             y: 0,
             opacity: 1,
-            duration: config.duration,
-            ease: config.ease
-        }, config.start);
+            duration: animationConfig.reveal.title.duration,
+            stagger: animationConfig.reveal.title.stagger,
+            ease: "back.out(1.7)"
+        }, revealStart + 1.2);
+    }
 
-        console.log(`🧭 Navigation animation scheduled at ${config.start}s`);
+    // Calcular cuándo termina la secuencia de imágenes
+    const imagesCount = contentElements.heroImages.length;
+    const lastImageStart = revealStart + (imagesCount - 1) * animationConfig.reveal.images.stagger;
+    const lastImageEnd = lastImageStart + animationConfig.reveal.images.duration;
+    const heroExitStart = lastImageEnd + animationConfig.reveal.heroExit.delay;
+
+    // Salida de las imágenes hero hacia arriba
+    if (contentElements.loaderImagesWrapper) {
+        masterTimeline.to(contentElements.loaderImagesWrapper, {
+            yPercent: -100,
+            duration: animationConfig.reveal.heroExit.duration,
+            ease: "power2.inOut"
+        }, heroExitStart);
+    }
+
+    // Ocultar completamente el loader-wrapper después de que salgan las imágenes hero
+    if (preloaderElements.wrapper) {
+        masterTimeline.to(preloaderElements.wrapper, {
+            autoAlpha: 0, // opacity: 0 + visibility: hidden
+            duration: 0.1,
+            onComplete: function () {
+                // Forzar ocultación completa con display none
+                preloaderElements.wrapper.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important;';
+            }
+        }, heroExitStart + animationConfig.reveal.heroExit.duration);
     }
 }
 
 /**
- * Limpiar animación y elementos
+ * Limpieza opcional después de completar la animación
  */
 function cleanupAnimation() {
-    setTimeout(() => {
-        if (preloader && preloader.parentNode) {
-            preloader.parentNode.removeChild(preloader);
-            console.log('🧹 Preloader cleaned up');
+    // Remover will-change para optimizar rendimiento
+    const animatedElements = [
+        ...contentElements.heroImages,
+        contentElements.heroContainer,
+        contentElements.navigation,
+        ...(contentElements.titleSpans || [])
+    ].filter(Boolean);
+
+    animatedElements.forEach(element => {
+        if (element && element.style) {
+            element.style.willChange = 'auto';
         }
-    }, 500);
-}
-
-/**
- * Animación de fallback sin GSAP
- */
-function fallbackAnimation() {
-    console.log('🔧 Using fallback animation...');
-
-    const wrapper = document.querySelector('.loader-wrapper');
-    const heroImages = document.querySelectorAll('.hero-img');
-    const navbar = document.querySelector('.navbar5_component');
-    const loaderNumber = document.querySelector('.loader5_number');
-
-    if (!wrapper) return;
-
-    // Simular contador
-    let progress = isFirstVisit ? 0 : 75;
-    const increment = (100 - progress) / (loaderDuration * 60);
-
-    const animateCounter = () => {
-        progress += increment;
-        if (progress >= 100) {
-            progress = 100;
-            if (loaderNumber) loaderNumber.textContent = Math.round(progress);
-
-            // Ocultar loader después de completar
-            setTimeout(() => {
-                // Revelar TODAS las imágenes hero
-                heroImages.forEach((img, index) => {
-                    setTimeout(() => {
-                        img.style.clipPath = 'polygon(0 0%, 100% 0%, 100% 100%, 0 100%)';
-                        img.style.opacity = '1';
-                        img.style.transform = 'scale(1)';
-                        console.log(`📸 Fallback: Revealed hero image ${index + 1}`);
-                    }, index * 200); // 200ms entre cada imagen
-                });
-
-                // Ocultar wrapper
-                setTimeout(() => {
-                    wrapper.style.transition = 'opacity 0.8s ease';
-                    wrapper.style.opacity = '0';
-
-                    // Mostrar navbar
-                    if (navbar) {
-                        navbar.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-                        navbar.style.opacity = '1';
-                        navbar.style.transform = 'translateY(0)';
-                    }
-
-                    // Remover wrapper
-                    setTimeout(() => {
-                        if (wrapper.parentNode) {
-                            wrapper.parentNode.removeChild(wrapper);
-                        }
-                    }, 800);
-                }, heroImages.length * 200 + 500);
-            }, 200);
-            return;
-        }
-
-        if (loaderNumber) loaderNumber.textContent = Math.round(progress);
-        requestAnimationFrame(animateCounter);
-    };
-
-    animateCounter();
-}
-
-// ===== SISTEMA DE LIMPIEZA Y FALLBACKS =====
-(function () {
-    'use strict';
-
-    // Auto-hide del loader si se queda pegado
-    window.addEventListener('load', () => {
-        const timeouts = [10000, 15000, 20000]; // 10s, 15s, 20s
-
-        timeouts.forEach((delay, index) => {
-            setTimeout(() => {
-                const wrapper = document.querySelector('.loader-wrapper');
-                if (wrapper) {
-                    const isVisible = window.getComputedStyle(wrapper).display !== 'none';
-                    const hasOpacity = parseFloat(window.getComputedStyle(wrapper).opacity) > 0;
-
-                    if (isVisible && hasOpacity) {
-                        console.warn(`🚨 Loader timeout ${index + 1} - forcing cleanup after ${delay}ms`);
-
-                        // Forzar revelación de todas las imágenes
-                        const heroImages = document.querySelectorAll('.hero-img');
-                        const navbar = document.querySelector('.navbar5_component');
-
-                        heroImages.forEach((img, imgIndex) => {
-                            img.style.clipPath = 'polygon(0 0%, 100% 0%, 100% 100%, 0 100%)';
-                            img.style.opacity = '1';
-                            img.style.transform = 'scale(1)';
-                            console.log(`🚨 Emergency: Revealed hero image ${imgIndex + 1}`);
-                        });
-
-                        if (navbar) {
-                            navbar.style.opacity = '1';
-                            navbar.style.transform = 'translateY(0)';
-                        }
-
-                        wrapper.style.display = 'none';
-                        setTimeout(() => {
-                            if (wrapper && wrapper.parentNode) {
-                                wrapper.parentNode.removeChild(wrapper);
-                            }
-                        }, 100);
-                    }
-                }
-            }, delay);
-        });
     });
-})();
-
-// ===== DEBUGGING UTILITIES =====
-window.debugAcuaticaAnimation = {
-    timeline: () => window.acuaticaMasterTimeline,
-    restart: () => window.acuaticaMasterTimeline && window.acuaticaMasterTimeline.restart(),
-    pause: () => window.acuaticaMasterTimeline && window.acuaticaMasterTimeline.pause(),
-    play: () => window.acuaticaMasterTimeline && window.acuaticaMasterTimeline.play(),
-    seek: (time) => window.acuaticaMasterTimeline && window.acuaticaMasterTimeline.seek(time),
-    getProgress: () => window.acuaticaMasterTimeline ? window.acuaticaMasterTimeline.progress() : 0,
-    getDuration: () => window.acuaticaMasterTimeline ? window.acuaticaMasterTimeline.duration() : 0,
-
-    // Test específicos
-    testPreloader: () => {
-        if (window.acuaticaMasterTimeline) {
-            window.acuaticaMasterTimeline.pause();
-            window.acuaticaMasterTimeline.seek(0);
-            window.acuaticaMasterTimeline.play();
-        }
-    },
-
-    testReveal: () => {
-        if (window.acuaticaMasterTimeline) {
-            window.acuaticaMasterTimeline.pause();
-            window.acuaticaMasterTimeline.seek(animationConfig.reveal.start);
-            window.acuaticaMasterTimeline.play();
-        }
-    },
-
-    // Función para revelar imágenes manualmente (debugging)
-    revealAllImages: () => {
-        const heroImages = document.querySelectorAll('.hero-img');
-        console.log(`🔧 Manually revealing ${heroImages.length} hero images...`);
-
-        heroImages.forEach((img, index) => {
-            img.style.clipPath = 'polygon(0 0%, 100% 0%, 100% 100%, 0 100%)';
-            img.style.opacity = '1';
-            img.style.transform = 'scale(1)';
-            console.log(`✅ Revealed hero image ${index + 1}`);
-        });
-    },
-
-    // Información detallada
-    getInfo: () => {
-        const heroImages = document.querySelectorAll('.hero-img');
-        return {
-            totalDuration: window.acuaticaMasterTimeline ? window.acuaticaMasterTimeline.duration() : 0,
-            currentTime: window.acuaticaMasterTimeline ? window.acuaticaMasterTimeline.time() : 0,
-            progress: window.acuaticaMasterTimeline ? window.acuaticaMasterTimeline.progress() : 0,
-            heroImagesFound: heroImages.length,
-            revealStart: animationConfig.reveal.start,
-            navigationStart: animationConfig.reveal.navigation.start,
-            isFirstVisit: isFirstVisit
-        };
-    }
-};
+}
 
 /**
- * COREOGRAFÍA COMPLETA DE LA ANIMACIÓN ACUATICA:
- * 
- * FASE 1: PRELOADER (0-8 segundos primera visita, 0-2 segundos recurrente)
- * - 0.5s: Inicia contador y barra de progreso
- * - 0.5-2.5s: Barra crece 0% → 30%
- * - 2.5-7.0s: Barra crece 30% → 100%
- * - 7.2s: Barra se desvanece
- * - 7.5s: Componente del loader se oculta
- * - 8.0s: Preloader se desliza hacia arriba con clip-path
- * 
- * FASE 2: REVELADO HERO (9-16 segundos) - ¡LA PARTE CLAVE!
- * - 9.0s: Inicia secuencia de 7 imágenes hero
- * - Cada imagen se revela con clip-path desde abajo
- * - Efectos de zoom dramático (entrada, display, salida)
- * - Solo la última imagen (z-index-7) permanece visible
- * - Secuencia: z-index-1 → z-index-2 → ... → z-index-7
- * 
- * FASE 3: NAVEGACIÓN (16 segundos)
- * - 16.0s: Navbar entra desde arriba con fade-in
- * 
- * TOTAL: ~16 segundos de animación completa
- * 
- * ESTRUCTURA DE CAPAS:
- * 1. loader-wrapper (z-index: 100) - Preloader superior
- * 2. loader_imgs (z-index: 98) - Contenedor de imágenes hero
- * 3. hero-img.z-index-1 a 7 (z-index: 1-7) - 7 imágenes superpuestas
- * 4. navbar5_component - Navegación final
+ * Función de utilidad para debugging del timeline
  */
+function debugTimeline() {
+    if (masterTimeline) {
+        console.log('Timeline duration:', masterTimeline.duration());
+        console.log('Timeline progress:', masterTimeline.progress());
+        console.log('Timeline time:', masterTimeline.time());
+    }
+}
+
+// Exponer funciones para debugging en desarrollo
+if (typeof window !== 'undefined') {
+    window.debugTimeline = debugTimeline;
+    window.masterTimeline = masterTimeline;
+}

@@ -1,6 +1,6 @@
 # Requirements Document
 
-## Introduction
+## Introduction....
 
 Este proyecto consiste en crear una animación de revelado de landing page con un preloader interactivo usando GSAP. La experiencia debe comenzar con un preloader de pantalla completa que muestra un contador numérico del 0% al 100% y una barra de progreso. Una vez completada la carga, el preloader desaparece para revelar el contenido de la página con animaciones fluidas y atractivas.
 

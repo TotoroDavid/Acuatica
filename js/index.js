@@ -17,7 +17,8 @@ const animationConfig = {
         images: { stagger: 0.3, duration: 1.5 },
         zoom: { scale: 1.2, duration: 4 },
         navigation: { y: 0, duration: 1.2 },
-        title: { stagger: 0.1, duration: 0.8 }
+        title: { stagger: 0.1, duration: 0.8 },
+        heroExit: { duration: 1.5, delay: 2 } // Configuración para salida de hero
     }
 };
 
@@ -127,6 +128,7 @@ document.addEventListener('DOMContentLoaded', function () {
 function initializeDOMElements() {
     // Elementos del preloader
     preloaderElements = {
+        wrapper: document.querySelector('.loader-wrapper'), // Contenedor principal del loader
         container: document.querySelector('.loader5_component'),
         digits: document.querySelectorAll('.loader5_number'),
         progressBar: document.querySelector('.loader5_progress-bar'),
@@ -137,6 +139,7 @@ function initializeDOMElements() {
     contentElements = {
         heroImages: document.querySelectorAll('.hero-img'),
         heroContainer: document.querySelector('.hero-imgs'),
+        loaderImagesWrapper: document.querySelector('.loader_imgs'),
         navigation: document.querySelector('.navbar5_component'),
         titleContainer: document.querySelector('.header103_content-wrapper h2'),
         mainWrapper: document.querySelector('.main-wrapper')
@@ -343,7 +346,32 @@ function addContentRevealAnimations() {
         }, revealStart + 1.2);
     }
 
+    // Calcular cuándo termina la secuencia de imágenes
+    const imagesCount = contentElements.heroImages.length;
+    const lastImageStart = revealStart + (imagesCount - 1) * animationConfig.reveal.images.stagger;
+    const lastImageEnd = lastImageStart + animationConfig.reveal.images.duration;
+    const heroExitStart = lastImageEnd + animationConfig.reveal.heroExit.delay;
 
+    // Salida de las imágenes hero hacia arriba
+    if (contentElements.loaderImagesWrapper) {
+        masterTimeline.to(contentElements.loaderImagesWrapper, {
+            yPercent: -100,
+            duration: animationConfig.reveal.heroExit.duration,
+            ease: "power2.inOut"
+        }, heroExitStart);
+    }
+
+    // Ocultar completamente el loader-wrapper después de que salgan las imágenes hero
+    if (preloaderElements.wrapper) {
+        masterTimeline.to(preloaderElements.wrapper, {
+            autoAlpha: 0, // opacity: 0 + visibility: hidden
+            duration: 0.1,
+            onComplete: function () {
+                // Forzar ocultación completa con display none
+                preloaderElements.wrapper.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important;';
+            }
+        }, heroExitStart + animationConfig.reveal.heroExit.duration);
+    }
 }
 
 /**
@@ -355,7 +383,7 @@ function cleanupAnimation() {
         ...contentElements.heroImages,
         contentElements.heroContainer,
         contentElements.navigation,
-        ...contentElements.titleSpans
+        ...(contentElements.titleSpans || [])
     ].filter(Boolean);
 
     animatedElements.forEach(element => {
