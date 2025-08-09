@@ -26,7 +26,6 @@ const animationConfig = {
 let preloaderElements = {};
 let contentElements = {};
 let masterTimeline;
-let intersectionObserver;
 
 /**
  * Inyecta estilos críticos necesarios para que el loader y las imágenes hero
@@ -192,6 +191,8 @@ function setInitialStates() {
         gsap.set(contentElements.heroContainer, { scale: 1 });
     }
 
+
+
     // Estado inicial de la navegación
     if (contentElements.navigation) {
         gsap.set(contentElements.navigation, { y: -150 });
@@ -306,7 +307,25 @@ function addPreloaderTransition() {
 function addContentRevealAnimations() {
     const revealStart = 4.5; // Inicia 0.5s después de que comience la salida del preloader
 
-    // Solo animaciones iniciales (navegación y título)
+    // Revelado de imágenes con efecto stagger
+    if (contentElements.heroImages.length > 0) {
+        masterTimeline.to(contentElements.heroImages, {
+            clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
+            duration: animationConfig.reveal.images.duration,
+            stagger: animationConfig.reveal.images.stagger,
+            ease: "power1.out" // Cambio a ease más suave
+        }, revealStart);
+    }
+
+    // Efecto de zoom dramático
+    if (contentElements.heroContainer) {
+        masterTimeline.to(contentElements.heroContainer, {
+            scale: animationConfig.reveal.zoom.scale,
+            duration: animationConfig.reveal.zoom.duration,
+            ease: "power1.out"
+        }, revealStart + 0.5);
+    }
+
     // Animación de la navegación
     if (contentElements.navigation) {
         masterTimeline.to(contentElements.navigation, {
@@ -327,72 +346,15 @@ function addContentRevealAnimations() {
         }, revealStart + 1.2);
     }
 
-    // Configurar observer para las imágenes hero después de que termine el preloader
-    masterTimeline.call(() => {
-        setupIntersectionObserver();
-    }, null, revealStart + 2);
-}
-
-/**
- * Configura el Intersection Observer para detectar cuando el 90% del contenedor está visible
- */
-function setupIntersectionObserver() {
-    if (!contentElements.heroContainer) return;
-
-    intersectionObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.intersectionRatio >= 0.9) { // 90% visible
-                console.log('90% del contenedor visible - iniciando animaciones de imágenes');
-                triggerHeroAnimations();
-                // Desconectar observer después del primer trigger
-                intersectionObserver.disconnect();
-            }
-        });
-    }, {
-        threshold: 0.9, // 90% visible
-        rootMargin: '0px'
-    });
-
-    // Observar el contenedor de imágenes hero
-    intersectionObserver.observe(contentElements.heroContainer);
-    console.log('Intersection Observer configurado para 90% de visibilidad');
-}
-
-/**
- * Ejecuta las animaciones de las imágenes hero cuando se cumple el threshold
- */
-function triggerHeroAnimations() {
-    // Timeline separado para las animaciones de hero
-    const heroTimeline = gsap.timeline();
-
-    // Revelado de imágenes con efecto stagger
-    if (contentElements.heroImages.length > 0) {
-        heroTimeline.to(contentElements.heroImages, {
-            clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
-            duration: animationConfig.reveal.images.duration,
-            stagger: animationConfig.reveal.images.stagger,
-            ease: "power1.out"
-        }, 0);
-    }
-
-    // Efecto de zoom dramático
-    if (contentElements.heroContainer) {
-        heroTimeline.to(contentElements.heroContainer, {
-            scale: animationConfig.reveal.zoom.scale,
-            duration: animationConfig.reveal.zoom.duration,
-            ease: "power1.out"
-        }, 0.5);
-    }
-
     // Calcular cuándo termina la secuencia de imágenes
     const imagesCount = contentElements.heroImages.length;
-    const lastImageStart = (imagesCount - 1) * animationConfig.reveal.images.stagger;
+    const lastImageStart = revealStart + (imagesCount - 1) * animationConfig.reveal.images.stagger;
     const lastImageEnd = lastImageStart + animationConfig.reveal.images.duration;
     const heroExitStart = lastImageEnd + animationConfig.reveal.heroExit.delay;
 
     // Salida de las imágenes hero hacia arriba
     if (contentElements.loaderImagesWrapper) {
-        heroTimeline.to(contentElements.loaderImagesWrapper, {
+        masterTimeline.to(contentElements.loaderImagesWrapper, {
             yPercent: -100,
             duration: animationConfig.reveal.heroExit.duration,
             ease: "power2.inOut"
@@ -401,81 +363,15 @@ function triggerHeroAnimations() {
 
     // Ocultar completamente el loader-wrapper después de que salgan las imágenes hero
     if (preloaderElements.wrapper) {
-        heroTimeline.to(preloaderElements.wrapper, {
+        masterTimeline.to(preloaderElements.wrapper, {
             autoAlpha: 0, // opacity: 0 + visibility: hidden
             duration: 0.1,
             onComplete: function () {
                 // Forzar ocultación completa con display none
                 preloaderElements.wrapper.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important;';
-                cleanupAnimation();
             }
         }, heroExitStart + animationConfig.reveal.heroExit.duration);
     }
-}
-
-/**
- * Configura el Intersection Observer para animar las imágenes hero cuando sean visibles
- * Implementa lazy loading de animaciones para mejor performance
- */
-function setupIntersectionObserver() {
-    // Verificar que tenemos imágenes hero para observar
-    if (!contentElements.heroImages.length) return;
-
-    // Configuración del observer con threshold optimizado
-    const observerOptions = {
-        root: null, // viewport
-        rootMargin: '0px 0px -10% 0px', // Trigger cuando el 10% inferior esté visible
-        threshold: 0.1 // Activar cuando al menos 10% del elemento sea visible
-    };
-
-    // Crear el observer
-    intersectionObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-                // Animar la imagen que entró en viewport
-                animateHeroImageReveal(entry.target);
-
-                // Dejar de observar esta imagen (one-time animation)
-                intersectionObserver.unobserve(entry.target);
-            }
-        });
-    }, observerOptions);
-
-    // Comenzar a observar todas las imágenes hero
-    contentElements.heroImages.forEach((img, index) => {
-        // Añadir delay escalonado basado en el índice
-        img.dataset.animationDelay = index * 0.2;
-        intersectionObserver.observe(img);
-    });
-
-    console.log('Intersection Observer configurado para', contentElements.heroImages.length, 'imágenes hero');
-}
-
-/**
- * Anima la revelación de una imagen hero individual
- * Usa clip-path para un efecto moderno de revelado
- */
-function animateHeroImageReveal(imageElement) {
-    const delay = parseFloat(imageElement.dataset.animationDelay) || 0;
-
-    // Timeline para esta imagen específica
-    const imageTimeline = gsap.timeline({ delay });
-
-    // Revelado con clip-path (efecto cortina desde arriba)
-    imageTimeline.to(imageElement, {
-        clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
-        duration: animationConfig.reveal.images.duration,
-        ease: "power2.out"
-    });
-
-    // Efecto de zoom sutil para profundidad
-    imageTimeline.to(imageElement, {
-        scale: 1.05,
-        duration: animationConfig.reveal.zoom.duration,
-        ease: "power1.out"
-    }, 0.3);
-
-    console.log('Animando imagen hero:', imageElement);
 }
 
 /**
@@ -495,12 +391,6 @@ function cleanupAnimation() {
             element.style.willChange = 'auto';
         }
     });
-
-    // Limpiar observer si aún existe
-    if (intersectionObserver) {
-        intersectionObserver.disconnect();
-        intersectionObserver = null;
-    }
 }
 
 /**
