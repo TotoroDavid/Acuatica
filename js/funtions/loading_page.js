@@ -2,27 +2,30 @@
 (function () {
     'use strict';
 
+    // MEJORA: Control de ejecución única
+    if (window.loaderInitialized) {
+        return; // Ya se inicializó, salir
+    }
+    window.loaderInitialized = true;
+
     // Initialize the counter and loader duration variables
-    let counter = {
-        value: 0
-    };
+    let counter = { value: 0 };
     let loaderDuration = 8;
     let maxRetries = 10;
     let retryCount = 0;
+    let isFirstVisit = true;
 
     // Check if this is not the first time the user has visited this page
     try {
         if (sessionStorage.getItem("visited") !== null) {
-            // If so, set the loader duration to 2 seconds and the counter value to 75
+            isFirstVisit = false;
             loaderDuration = 2;
-            counter = {
-                value: 75
-            };
+            counter = { value: 75 };
         }
-        // Set the visited item in the session storage to "true"
         sessionStorage.setItem("visited", "true");
     } catch (e) {
         // Ignore sessionStorage errors
+        console.warn('SessionStorage not available:', e);
     }
 
     // Define a function to update the loader text
@@ -40,27 +43,66 @@
     // Define a function to end the loader animation
     function endLoaderAnimation() {
         try {
+            // MEJORA: Marcar como completado para evitar múltiples ejecuciones
+            window.loaderCompleted = true;
+
             if (typeof $ !== 'undefined') {
                 $(".loader5_ix-trigger").click();
             }
         } catch (e) {
-            // Fallback: hide loader manually
-            try {
-                if (typeof $ !== 'undefined') {
-                    $(".loader-wrapper").fadeOut(500);
+            // Fallback: hide loader manually con transición correcta
+            hideLoaderProperly();
+        }
+    }
+
+    // MEJORA: Función específica para ocultar el loader correctamente
+    function hideLoaderProperly() {
+        try {
+            if (typeof $ !== 'undefined') {
+                const $loader = $(".loader-wrapper");
+                if ($loader.length > 0) {
+                    // Paso 1: Opacity 0 (mantiene el espacio pero permite clics)
+                    $loader.css({
+                        'opacity': '0',
+                        'pointer-events': 'none', // CLAVE: Permite clics a través del loader
+                        'transition': 'opacity 0.5s ease'
+                    });
+
+                    // Paso 2: Display none después de la transición
+                    setTimeout(() => {
+                        $loader.css('display', 'none').remove();
+                        console.log('✅ Loader hidden and removed');
+                    }, 500);
                 }
-            } catch (e2) {
-                // Last resort: use vanilla JS
-                let loader = document.querySelector('.loader-wrapper');
-                if (loader) {
+            }
+        } catch (e) {
+            // Last resort: use vanilla JS
+            const loader = document.querySelector('.loader-wrapper');
+            if (loader) {
+                // Paso 1: Opacity 0 + pointer-events none
+                loader.style.transition = 'opacity 0.5s ease';
+                loader.style.opacity = '0';
+                loader.style.pointerEvents = 'none'; // CLAVE: Permite clics inmediatamente
+
+                // Paso 2: Display none después de la transición
+                setTimeout(() => {
                     loader.style.display = 'none';
-                }
+                    if (loader.parentNode) {
+                        loader.parentNode.removeChild(loader);
+                    }
+                    console.log('✅ Loader hidden and removed (vanilla JS)');
+                }, 500);
             }
         }
     }
 
     // Function to initialize and start the loader
     function initLoader() {
+        // MEJORA: Verificar si ya se completó
+        if (window.loaderCompleted) {
+            return;
+        }
+
         try {
             retryCount++;
 
@@ -70,19 +112,28 @@
                     setTimeout(initLoader, 300);
                     return;
                 }
-                // Give up after max retries
+                // MEJORA: Fallback sin GSAP
+                console.warn('GSAP/jQuery not available, using fallback loader');
+                fallbackLoader();
+                return;
+            }
+
+            // MEJORA: Verificar que el loader existe en el DOM
+            const loaderWrapper = $(".loader-wrapper");
+            if (loaderWrapper.length === 0) {
+                console.warn('Loader wrapper not found in DOM');
                 return;
             }
 
             // Force show the loader wrapper
-            $(".loader-wrapper").show().css({
+            loaderWrapper.show().css({
                 "display": "block",
                 "visibility": "visible",
                 "opacity": "1"
             });
 
             // Create a timeline animation using GSAP
-            let tl = gsap.timeline({
+            const tl = gsap.timeline({
                 onComplete: endLoaderAnimation
             });
 
@@ -91,65 +142,123 @@
                 value: 100,
                 onUpdate: updateLoaderText,
                 duration: loaderDuration,
-                ease: "easeInOut"
+                ease: "power2.inOut" // MEJORA: Ease más moderno
             });
 
             // Animate the width of the loader progress bar to 100%
             tl.to(".loader5_progress-bar", {
                 width: "100%",
                 duration: loaderDuration,
-                ease: "easeInOut"
+                ease: "power2.inOut"
             }, 0);
 
+            console.log(`🔄 Loader initialized (${isFirstVisit ? 'first visit' : 'returning visitor'})`);
+
         } catch (error) {
-            // If there's an error, try again
+            console.error('Loader initialization error:', error);
             if (retryCount < maxRetries) {
                 setTimeout(initLoader, 500);
+            } else {
+                fallbackLoader();
             }
         }
     }
 
-    // Multiple initialization strategies
+    // MEJORA: Fallback loader sin dependencias
+    function fallbackLoader() {
+        const loader = document.querySelector('.loader-wrapper');
+        if (!loader) return;
+
+        let progress = counter.value;
+        const increment = (100 - progress) / (loaderDuration * 60); // 60fps aprox
+
+        const animate = () => {
+            progress += increment;
+            if (progress >= 100) {
+                progress = 100;
+                updateLoaderText();
+                setTimeout(endLoaderAnimation, 100);
+                return;
+            }
+            counter.value = progress;
+            updateLoaderText();
+            requestAnimationFrame(animate);
+        };
+
+        animate();
+    }
+
+    // MEJORA: Estrategia de inicialización única y controlada
     function startLoaderSafely() {
+        // Verificar si ya se ejecutó
+        if (window.loaderStarted) {
+            return;
+        }
+        window.loaderStarted = true;
+
         try {
             initLoader();
         } catch (e) {
-            // Ignore errors and try again
-            setTimeout(startLoaderSafely, 200);
+            console.error('Loader start error:', e);
+            // Solo reintentar una vez
+            setTimeout(() => {
+                window.loaderStarted = false;
+                startLoaderSafely();
+            }, 500);
         }
     }
 
-    // Try to start immediately
-    startLoaderSafely();
-
-    // Try when DOM is ready
-    if (typeof $ !== 'undefined') {
-        try {
-            $(document).ready(startLoaderSafely);
-        } catch (e) {
-            // Ignore jQuery errors
-        }
-    }
-
-    // Try when window loads
-    if (typeof $ !== 'undefined') {
-        try {
-            $(window).on('load', startLoaderSafely);
-        } catch (e) {
-            // Ignore jQuery errors
-        }
-    }
-
-    // Fallback with vanilla JS
+    // MEJORA: Una sola estrategia de inicialización basada en el estado del DOM
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', startLoaderSafely);
     } else {
+        // DOM ya está listo
         startLoaderSafely();
     }
 
-    // Final fallback after 1 second
-    setTimeout(startLoaderSafely, 1000);
+})();
 
+// ===== LOADER SESSION CONTROL =====
+// MEJORA: Sistema adicional para prevenir múltiples ejecuciones
+(function () {
+    'use strict';
+
+    // Limpiar cualquier loader que pueda haber quedado visible
+    const cleanupStuckLoader = () => {
+        const loaders = document.querySelectorAll('.loader-wrapper');
+        loaders.forEach((loader, index) => {
+            if (index > 0) { // Mantener solo el primero
+                loader.remove();
+            }
+        });
+    };
+
+    // Ejecutar limpieza después de que todo se haya cargado
+    window.addEventListener('load', () => {
+        setTimeout(cleanupStuckLoader, 1000);
+
+        // MEJORA: Auto-hide del loader si se queda pegado después de 15 segundos
+        setTimeout(() => {
+            if (!window.loaderCompleted) {
+                console.warn('🚨 Loader timeout - forcing hide');
+                const loader = document.querySelector('.loader-wrapper');
+                if (loader && loader.style.display !== 'none') {
+                    // Usar la misma función para consistencia
+                    loader.style.transition = 'opacity 0.5s ease';
+                    loader.style.opacity = '0';
+                    loader.style.pointerEvents = 'none'; // CLAVE: Permite clics inmediatamente
+
+                    setTimeout(() => {
+                        loader.style.display = 'none';
+                        if (loader.parentNode) {
+                            loader.parentNode.removeChild(loader);
+                        }
+                        console.log('✅ Loader timeout - hidden and removed');
+                    }, 500);
+                }
+            }
+        }, 15000);
+    });
 })();
 
 // ===== FALLBACK FOR LENIS (In case external script fails due to CORS) =====
